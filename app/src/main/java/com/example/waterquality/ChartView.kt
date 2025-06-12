@@ -69,4 +69,118 @@ fun PHChartView(phValues: List<Float>, modifier: Modifier = Modifier) {
     )
 }
 
+@Composable
+fun TDSChartView(tdsValues: List<Float>, modifier: Modifier = Modifier) {
+    val entries = tdsValues.mapIndexed { index, tds -> Entry(index.toFloat(), tds) }
 
+    AndroidView(
+        factory = { context ->
+            LineChart(context).apply {
+                description.isEnabled = false
+                setTouchEnabled(true)
+                setPinchZoom(true)
+                setDrawGridBackground(false)
+
+                axisLeft.apply {
+                    axisMinimum = 0f
+                    axisMaximum = 1000f  // Sesuaikan range TDS
+                    granularity = 100f
+                    isGranularityEnabled = true
+                    setLabelCount(11, false)
+                }
+
+                axisRight.isEnabled = false
+                xAxis.apply {
+                    axisMinimum = 0f
+                    granularity = 1f
+                    setDrawGridLines(true)
+                    setDrawAxisLine(true)
+                    setDrawLabels(true)
+                }
+
+                val dataSet = LineDataSet(entries, "TDS Level (ppm)").apply {
+                    color = Color.GREEN
+                    setCircleColor(Color.GREEN)
+                    lineWidth = 2f
+                    circleRadius = 3f
+                    setDrawValues(false)
+                }
+
+                data = LineData(dataSet)
+                invalidate()
+            }
+        },
+        update = { chart ->
+            val dataSet = LineDataSet(entries, "TDS Level (ppm)").apply {
+                color = Color.GREEN
+                setCircleColor(Color.GREEN)
+                lineWidth = 2f
+                circleRadius = 3f
+                setDrawValues(false)
+            }
+            chart.data = LineData(dataSet)
+            chart.xAxis.axisMinimum = 0f
+            chart.moveViewToX(0f)
+            chart.invalidate()
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun TempChartView(tempValues: List<Float>, modifier: Modifier = Modifier) {
+    val entries = tempValues.mapIndexed { index, tds -> Entry(index.toFloat(), tds) }
+
+    AndroidView(
+        factory = { context ->
+            LineChart(context).apply {
+                description.isEnabled = false
+                setTouchEnabled(true)
+                setPinchZoom(true)
+                setDrawGridBackground(false)
+
+                axisLeft.apply {
+                    axisMinimum = 0f
+                    axisMaximum = 200f  // Sesuaikan range TDS
+                    granularity = 10f
+                    isGranularityEnabled = true
+                    setLabelCount(11, false)
+                }
+
+                axisRight.isEnabled = false
+                xAxis.apply {
+                    axisMinimum = 0f
+                    granularity = 1f
+                    setDrawGridLines(true)
+                    setDrawAxisLine(true)
+                    setDrawLabels(true)
+                }
+
+                val dataSet = LineDataSet(entries, "Temperature (C)").apply {
+                    color = Color.CYAN
+                    setCircleColor(Color.CYAN)
+                    lineWidth = 2f
+                    circleRadius = 3f
+                    setDrawValues(false)
+                }
+
+                data = LineData(dataSet)
+                invalidate()
+            }
+        },
+        update = { chart ->
+            val dataSet = LineDataSet(entries, "Temperature (C)").apply {
+                color = Color.CYAN
+                setCircleColor(Color.CYAN)
+                lineWidth = 2f
+                circleRadius = 3f
+                setDrawValues(false)
+            }
+            chart.data = LineData(dataSet)
+            chart.xAxis.axisMinimum = 0f
+            chart.moveViewToX(0f)
+            chart.invalidate()
+        },
+        modifier = modifier
+    )
+}

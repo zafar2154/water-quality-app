@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,14 +41,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
+    val scrollState = rememberScrollState()
+
     val sensorData by viewModel.sensorData.collectAsState()
     var phHistory by remember { mutableStateOf(listOf<Float>()) }
+    var tdsHistory by remember { mutableStateOf(listOf<Float>()) }
+    var tempHistory by remember { mutableStateOf(listOf<Float>()) }
 
     LaunchedEffect(sensorData) {
-        phHistory = phHistory.takeLast(20) + sensorData.ph
+        phHistory = phHistory.takeLast(10) + sensorData.ph
+        tdsHistory = tdsHistory.takeLast(10) + sensorData.tds
+        tempHistory = tempHistory.takeLast(10) + sensorData.temperature
     }
 
-    Column(modifier = Modifier.padding(20.dp)) {
+    Column(modifier = Modifier.padding(20.dp).verticalScroll(scrollState)) {
         Text("pH: ${"%.2f".format(sensorData.ph)}")
         Text("TDS: ${sensorData.tds} ppm")
         Text("Temp: ${sensorData.temperature} °C")
@@ -59,12 +67,16 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
         Spacer(Modifier.height(24.dp))
 
         PHChartView(phValues = phHistory, modifier = Modifier.height(300.dp).fillMaxWidth())
+        Spacer(Modifier.height(24.dp))
+        TDSChartView(tdsValues = tdsHistory, modifier = Modifier.height(300.dp).fillMaxWidth())
+        Spacer(Modifier.height(24.dp))
+        TempChartView(tempValues =  tempHistory, modifier = Modifier.height(300.dp).fillMaxWidth())
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+fun PreviewApp() {
     WaterQualityTheme {
         WaterQualityApp()
     }
