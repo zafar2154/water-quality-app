@@ -49,6 +49,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,7 +58,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-
+    implementation(libs.mpandroidchart)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.json)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 }
