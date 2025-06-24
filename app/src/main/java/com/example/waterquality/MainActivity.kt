@@ -7,18 +7,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -32,9 +37,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -97,13 +104,13 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
         )
         },
         containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets(0)
+        contentWindowInsets = WindowInsets.safeDrawing
     ) {
 innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(12.dp)
                 .verticalScroll(scrollState)
                 .fillMaxSize()
         ) {
@@ -114,12 +121,20 @@ innerPadding ->
                     CurrentData(tempIcon, "${sensorData.temperature}", "Temperature")
                 }
             }
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
         Button(onClick = { viewModel.fetchSimulateData() }) {
             Text("Update Data")
         }
 
             Spacer(Modifier.height(24.dp))
+            HorizontalDivider(thickness = 1.dp, color =Color.Black)
+            Spacer(Modifier.height(24.dp))
+
+            Text("PH Graph", modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .align(Alignment.CenterHorizontally)
+                .wrapContentSize()
+            )
             ChartView(
                 title = "PH Level",
                 values = phHistory,
@@ -128,7 +143,13 @@ innerPadding ->
                 labelCount = 14,
                 lineColor = android.graphics.Color.BLUE
             )
+
             Spacer(Modifier.height(24.dp))
+
+            Text("TDS Graph", modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .align(Alignment.CenterHorizontally)
+            )
             ChartView(
                 title = "TDS Level (ppm)",
                 values = tdsHistory,
@@ -137,7 +158,12 @@ innerPadding ->
                 labelCount = 100,
                 lineColor = android.graphics.Color.GREEN
             )
+
             Spacer(Modifier.height(24.dp))
+
+            Text("Temp Chart", modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+            )
             ChartView(
                 title = "Temperature Level (C)",
                 values = tempHistory,

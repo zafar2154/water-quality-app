@@ -92,7 +92,7 @@ fun ChartView(
             chart.invalidate()
         },
         modifier = modifier
-            .height(300.dp)
+            .height(200.dp)
             .fillMaxWidth()
     )
 }
