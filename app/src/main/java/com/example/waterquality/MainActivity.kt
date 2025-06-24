@@ -43,13 +43,12 @@ import com.example.waterquality.ui.theme.WaterQualityTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setContent {
             WaterQualityTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     WaterQualityApp()
                 }
@@ -96,7 +95,9 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
             modifier = Modifier
                 .border(1.dp, Color.DarkGray)
         )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0)
     ) {
 innerPadding ->
         Column(
@@ -104,6 +105,7 @@ innerPadding ->
                 .padding(innerPadding)
                 .padding(16.dp)
                 .verticalScroll(scrollState)
+                .fillMaxSize()
         ) {
             LazyRow {
                 item {
