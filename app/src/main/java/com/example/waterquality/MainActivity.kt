@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -19,7 +19,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,7 +47,12 @@ class MainActivity : ComponentActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setContent {
             WaterQualityTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.White
+                ) {
                     WaterQualityApp()
+                }
                 }
             }
         }
@@ -71,12 +78,12 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
 //        Triple(tempIcon, "${sensorData.temperature}", "Temperature")
 //    )
     LaunchedEffect(sensorData) {
-        phHistory = phHistory.takeLast(10) + sensorData.ph
-        tdsHistory = tdsHistory.takeLast(10) + sensorData.tds
-        tempHistory = tempHistory.takeLast(10) + sensorData.temperature
+        phHistory = phHistory + sensorData.ph
+        tdsHistory = tdsHistory + sensorData.tds
+        tempHistory = tempHistory + sensorData.temperature
     }
     LaunchedEffect(Unit) {
-        viewModel.fetchSensor()
+        viewModel.fetchSimulateData()
     }
 
     Scaffold (
@@ -87,7 +94,6 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
                 containerColor = Color.Cyan
             ),
             modifier = Modifier
-                .padding(WindowInsets.statusBars.asPaddingValues())
                 .border(1.dp, Color.DarkGray)
         )
         }
@@ -107,23 +113,36 @@ innerPadding ->
                 }
             }
             Spacer(Modifier.height(16.dp))
-        Button(onClick = { viewModel.fetchSensor() }) {
+        Button(onClick = { viewModel.fetchSimulateData() }) {
             Text("Update Data")
         }
 
             Spacer(Modifier.height(24.dp))
-            PHChartView(phValues = phHistory)
-            Spacer(Modifier.height(24.dp))
-            TDSChartView(
-                tdsValues = tdsHistory, modifier = Modifier
-                    .height(300.dp)
-                    .fillMaxWidth()
+            ChartView(
+                title = "PH Level",
+                values = phHistory,
+                ymax = 14f,
+                granularityY = 1f,
+                labelCount = 14,
+                lineColor = android.graphics.Color.BLUE
             )
             Spacer(Modifier.height(24.dp))
-            TempChartView(
-                tempValues = tempHistory, modifier = Modifier
-                    .height(300.dp)
-                    .fillMaxWidth()
+            ChartView(
+                title = "TDS Level (ppm)",
+                values = tdsHistory,
+                ymax = 1000f,
+                granularityY = 100f,
+                labelCount = 100,
+                lineColor = android.graphics.Color.GREEN
+            )
+            Spacer(Modifier.height(24.dp))
+            ChartView(
+                title = "Temperature Level (C)",
+                values = tempHistory,
+                ymax = 100f,
+                granularityY = 10f,
+                labelCount = 50,
+                lineColor = android.graphics.Color.YELLOW
             )
         }
     }

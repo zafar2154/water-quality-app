@@ -1,18 +1,40 @@
 package com.example.waterquality
 
 import android.graphics.Color
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.waterquality.ui.theme.WaterQualityTheme
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 
 @Composable
-fun PHChartView(phValues: List<Float>, modifier: Modifier = Modifier) {
-    val entries = phValues.mapIndexed { index, ph -> Entry(index.toFloat(), ph) }
-
+fun ChartView(
+    title: String,
+    lineColor: Int,
+    ymax: Float,
+    granularityY: Float,
+    labelCount: Int,
+    values: List<Float>,
+    modifier: Modifier = Modifier
+) {
+    val windowSize = 10
     AndroidView(
         factory = { context ->
             LineChart(context).apply {
@@ -23,164 +45,80 @@ fun PHChartView(phValues: List<Float>, modifier: Modifier = Modifier) {
 
                 axisLeft.apply {
                     axisMinimum = 0f
-                    axisMaximum = 14f
-                    granularity = 1f
+                    axisMaximum = ymax
+                    granularity = granularityY
                     isGranularityEnabled = true
-                    setLabelCount(15, false)
-
+                    setLabelCount(labelCount, false)
                 }
+
                 axisRight.isEnabled = false
+
                 xAxis.apply {
-                    axisMinimum = 0f         // Mulai dari 0 di kiri
-                    granularity = 1f         // Jarak antar nilai (biar tidak acak)
+                    granularity = 1f
                     setDrawGridLines(true)
                     setDrawAxisLine(true)
                     setDrawLabels(true)
-                }
+                    setLabelCount(10, false)
+                    position = XAxis.XAxisPosition.BOTTOM
+                    valueFormatter = object : ValueFormatter() {
+                        override fun getFormattedValue(value: Float): String {
+                            return value.toInt().toString()
+                        }
+                    }
 
-                val dataSet = LineDataSet(entries, "pH Level").apply {
-                    color = Color.BLUE
-                    setCircleColor(Color.BLUE)
-                    lineWidth = 2f
-                    circleRadius = 3f
-                    setDrawValues(false)
                 }
-
-                data = LineData(dataSet)
-                moveViewToX(0f)
-                invalidate()
             }
         },
-
         update = { chart ->
-            val dataSet = LineDataSet(entries, "pH Level").apply {
-                color = Color.BLUE
-                setCircleColor(Color.BLUE)
+            val entries = values.mapIndexed { index, value ->
+                Entry(index.toFloat(), value)
+            }
+            val dataSet = LineDataSet(entries, title).apply {
+                color = lineColor
+                setCircleColor(lineColor)
                 lineWidth = 2f
                 circleRadius = 3f
                 setDrawValues(false)
             }
             chart.data = LineData(dataSet)
-            chart.xAxis.axisMinimum = 0f
-            chart.moveViewToX(0f)
+
+            val lastX = entries.lastOrNull()?.x ?: 0f
+            val minX = (lastX - windowSize).coerceAtLeast(0f)
+            val maxX = minX + windowSize
+
+            chart.xAxis.axisMinimum = minX
+            chart.xAxis.axisMaximum = maxX
+            chart.moveViewToX(minX)
             chart.invalidate()
         },
         modifier = modifier
+            .height(300.dp)
+            .fillMaxWidth()
     )
 }
 
+@Preview(showBackground = true)
 @Composable
-fun TDSChartView(tdsValues: List<Float>, modifier: Modifier = Modifier) {
-    val entries = tdsValues.mapIndexed { index, tds -> Entry(index.toFloat(), tds) }
-
-    AndroidView(
-        factory = { context ->
-            LineChart(context).apply {
-                description.isEnabled = false
-                setTouchEnabled(true)
-                setPinchZoom(true)
-                setDrawGridBackground(false)
-
-                axisLeft.apply {
-                    axisMinimum = 0f
-                    axisMaximum = 1000f  // Sesuaikan range TDS
-                    granularity = 100f
-                    isGranularityEnabled = true
-                    setLabelCount(11, false)
-                }
-
-                axisRight.isEnabled = false
-                xAxis.apply {
-                    axisMinimum = 0f
-                    granularity = 1f
-                    setDrawGridLines(true)
-                    setDrawAxisLine(true)
-                    setDrawLabels(true)
-                }
-
-                val dataSet = LineDataSet(entries, "TDS Level (ppm)").apply {
-                    color = Color.GREEN
-                    setCircleColor(Color.GREEN)
-                    lineWidth = 2f
-                    circleRadius = 3f
-                    setDrawValues(false)
-                }
-
-                data = LineData(dataSet)
-                invalidate()
-            }
-        },
-        update = { chart ->
-            val dataSet = LineDataSet(entries, "TDS Level (ppm)").apply {
-                color = Color.GREEN
-                setCircleColor(Color.GREEN)
-                lineWidth = 2f
-                circleRadius = 3f
-                setDrawValues(false)
-            }
-            chart.data = LineData(dataSet)
-            chart.xAxis.axisMinimum = 0f
-            chart.moveViewToX(0f)
-            chart.invalidate()
-        },
-        modifier = modifier
-    )
-}
-
-@Composable
-fun TempChartView(tempValues: List<Float>, modifier: Modifier = Modifier) {
-    val entries = tempValues.mapIndexed { index, tds -> Entry(index.toFloat(), tds) }
-
-    AndroidView(
-        factory = { context ->
-            LineChart(context).apply {
-                description.isEnabled = false
-                setTouchEnabled(true)
-                setPinchZoom(true)
-                setDrawGridBackground(false)
-
-                axisLeft.apply {
-                    axisMinimum = 0f
-                    axisMaximum = 200f  // Sesuaikan range TDS
-                    granularity = 10f
-                    isGranularityEnabled = true
-                    setLabelCount(11, false)
-                }
-
-                axisRight.isEnabled = false
-                xAxis.apply {
-                    axisMinimum = 0f
-                    granularity = 1f
-                    setDrawGridLines(true)
-                    setDrawAxisLine(true)
-                    setDrawLabels(true)
-                }
-
-                val dataSet = LineDataSet(entries, "Temperature (C)").apply {
-                    color = Color.CYAN
-                    setCircleColor(Color.CYAN)
-                    lineWidth = 2f
-                    circleRadius = 3f
-                    setDrawValues(false)
-                }
-
-                data = LineData(dataSet)
-                invalidate()
-            }
-        },
-        update = { chart ->
-            val dataSet = LineDataSet(entries, "Temperature (C)").apply {
-                color = Color.CYAN
-                setCircleColor(Color.CYAN)
-                lineWidth = 2f
-                circleRadius = 3f
-                setDrawValues(false)
-            }
-            chart.data = LineData(dataSet)
-            chart.xAxis.axisMinimum = 0f
-            chart.moveViewToX(0f)
-            chart.invalidate()
-        },
-        modifier = modifier
-    )
+fun PreviewChart(viewModel: SensorViewModel = viewModel()) {
+    WaterQualityTheme {
+        val sensorData by viewModel.sensorData.collectAsState()
+        var phHistory by remember { mutableStateOf(listOf<Float>()) }
+        var tdsHistory by remember { mutableStateOf(listOf<Float>()) }
+        var tempHistory by remember { mutableStateOf(listOf<Float>()) }
+        LaunchedEffect(sensorData) {
+            phHistory = phHistory.takeLast(10) + sensorData.ph
+            tdsHistory = tdsHistory.takeLast(10) + sensorData.tds
+            tempHistory = tempHistory.takeLast(10) + sensorData.temperature
+        }
+        Column {
+            ChartView(
+                title = "TDS Level (ppm)",
+                values = tdsHistory,
+                ymax = 1000f,
+                granularityY = 100f,
+                labelCount = 100,
+                lineColor = Color.GREEN
+            )
+        }
+    }
 }
