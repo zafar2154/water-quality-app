@@ -2,8 +2,11 @@ package com.example.waterquality
 
 import android.graphics.Color
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,6 +50,7 @@ fun ChartView(
                     axisMinimum = 0f
                     axisMaximum = ymax
                     granularity = granularityY
+                    textSize = 8f
                     isGranularityEnabled = true
                     setLabelCount(labelCount, false)
                 }
@@ -58,6 +62,7 @@ fun ChartView(
                     setDrawGridLines(true)
                     setDrawAxisLine(true)
                     setDrawLabels(true)
+                    textSize = 9f
                     setLabelCount(10, false)
                     position = XAxis.XAxisPosition.BOTTOM
                     valueFormatter = object : ValueFormatter() {
@@ -91,13 +96,13 @@ fun ChartView(
             chart.moveViewToX(minX)
             chart.invalidate()
         },
-        modifier = modifier
-            .height(300.dp)
+        modifier = Modifier
             .fillMaxWidth()
+            .height(200.dp)
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true )
 @Composable
 fun PreviewChart(viewModel: SensorViewModel = viewModel()) {
     WaterQualityTheme {
@@ -114,8 +119,8 @@ fun PreviewChart(viewModel: SensorViewModel = viewModel()) {
             ChartView(
                 title = "TDS Level (ppm)",
                 values = tdsHistory,
-                ymax = 1000f,
-                granularityY = 100f,
+                ymax = 10f,
+                granularityY = 1f,
                 labelCount = 100,
                 lineColor = Color.GREEN
             )
