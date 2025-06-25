@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -100,9 +101,9 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
     Scaffold (
         topBar = {
         TopAppBar(
-            title = { Text("WaterQuality")},
+            title = { Text("WaterQuality", color = Color.White)},
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Cyan
+                containerColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier
                 .border(1.dp, Color.DarkGray)
