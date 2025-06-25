@@ -95,7 +95,7 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
         tempHistory = tempHistory + sensorData.temperature
     }
     LaunchedEffect(Unit) {
-        viewModel.fetchSimulateData()
+        viewModel.fetchSensor()
     }
 
     Scaffold (
@@ -120,17 +120,18 @@ innerPadding ->
                 .verticalScroll(scrollState)
                 .fillMaxSize()
         ) {
-            LazyRow {
-                item {
+            Row (modifier = Modifier
+                .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+            ){
                     CurrentData(phIcon, "${sensorData.ph}", "PH")
                     CurrentData(tdsIcon, "${sensorData.tds} PPM", "TDS")
                     CurrentData(tempIcon, "${sensorData.temperature}", "Temperature")
-                }
             }
             Spacer(Modifier.height(12.dp))
-        Button(onClick = { viewModel.fetchSimulateData() }) {
-            Text("Update Data")
-        }
+//        Button(onClick = { viewModel.fetchSensor() }) {
+//            Text("Update Data")
+//        }
             Spacer(Modifier.height(24.dp))
             HorizontalDivider(thickness = 1.dp, color =Color.Black)
             Spacer(Modifier.height(24.dp))

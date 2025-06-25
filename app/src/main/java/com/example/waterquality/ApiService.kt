@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 data class SensorResponse(val ph: Float, val tds: Float, val temperature: Float)
 
 object ApiClient {
-    private const val BASE_URL = "http://192.168.1.2"
+    private const val BASE_URL = "http://192.168.1.7"
 
     val retrofit: ApiService by lazy {
         Retrofit.Builder()
