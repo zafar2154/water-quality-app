@@ -178,6 +178,7 @@ innerPadding ->
               }
 
             Spacer(Modifier.height(24.dp))
+
             Text("TDS Graph", modifier = Modifier
                 .width(IntrinsicSize.Max)
                 .align(Alignment.CenterHorizontally)
@@ -191,6 +192,7 @@ innerPadding ->
                 lineColor = android.graphics.Color.GREEN,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
+
             )
         }
     }
