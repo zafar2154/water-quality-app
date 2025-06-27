@@ -84,18 +84,14 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
     val phIcon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview)
     val tdsIcon = painterResource(R.drawable.screenshot_2025_06_12_233036_removebg_preview)
     val tempIcon = painterResource(R.drawable.pngtreevector_temperature_icon_4159827)
-//    val items = listOf(
-//        Triple(phIcon, "${sensorData.ph}", "PH"),
-//        Triple(tdsIcon, "${sensorData.tds} PPM", "TDS"),
-//        Triple(tempIcon, "${sensorData.temperature}", "Temperature")
-//    )
+
     LaunchedEffect(sensorData) {
         phHistory = phHistory + sensorData.ph
         tdsHistory = tdsHistory + sensorData.tds
         tempHistory = tempHistory + sensorData.temperature
     }
     LaunchedEffect(Unit) {
-        viewModel.fetchSensor()
+        viewModel.fetchSimulateData()
     }
 
     Scaffold (
@@ -124,14 +120,15 @@ innerPadding ->
                 .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
             ){
-                    CurrentData(phIcon, "${sensorData.ph}", "PH")
-                    CurrentData(tdsIcon, "${sensorData.tds} PPM", "TDS")
-                    CurrentData(tempIcon, "${sensorData.temperature}", "Temperature")
+                    CurrentData(phIcon, sensorData.ph, "pH")
+                    CurrentData(tdsIcon, sensorData.tds, "TDS")
+                    CurrentData(tempIcon, sensorData.temperature, "Temperature")
             }
             Spacer(Modifier.height(12.dp))
-//        Button(onClick = { viewModel.fetchSensor() }) {
-//            Text("Update Data")
-//        }
+
+        Button(onClick = { viewModel.fetchSimulateData() }) {
+            Text("Update Data")
+        }
             Spacer(Modifier.height(24.dp))
             HorizontalDivider(thickness = 1.dp, color =Color.Black)
             Spacer(Modifier.height(24.dp))
