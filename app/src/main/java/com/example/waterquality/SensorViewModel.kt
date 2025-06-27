@@ -21,9 +21,9 @@ class SensorViewModel : ViewModel() {
 //}
     fun fetchSimulateData() {
             _sensorData.value = SensorData(
-            ph = Random.nextFloat() * 2f + 6f,
-            tds = Random.nextInt(100, 500).toFloat(),
-            temperature = Random.nextInt(20, 30).toFloat()
+            ph = Random.nextInt(0, 14).toFloat(),
+            tds = Random.nextInt(100, 1000).toFloat(),
+            temperature = Random.nextInt(0, 70).toFloat()
         )
     }
 
