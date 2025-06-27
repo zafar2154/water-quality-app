@@ -96,8 +96,7 @@ fun ChartView(
             chart.moveViewToX(minX)
             chart.invalidate()
         },
-
- master
+        modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     )
