@@ -78,7 +78,7 @@ fun CurrentData(
             .width(100.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(getBackground(desc))
-            .padding(3.dp),
+            .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -86,7 +86,7 @@ fun CurrentData(
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier
-                .height(40.dp)
+                .height(30.dp)
                 .aspectRatio(1f)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -96,14 +96,14 @@ fun CurrentData(
                 fontFamily = FontFamily(Font(R.font.roboto)),
                 text = value.toString(),
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                fontSize = 12.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
                 fontFamily = FontFamily(Font(R.font.roboto)),
                 text = desc,
                 fontWeight = FontWeight.Light,
-                fontSize = 15.sp,
+                fontSize = 10.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }

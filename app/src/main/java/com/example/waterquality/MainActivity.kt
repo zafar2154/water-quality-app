@@ -6,8 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -124,8 +127,8 @@ innerPadding ->
                     CurrentData(tdsIcon, sensorData.tds, "TDS")
                     CurrentData(tempIcon, sensorData.temperature, "Temperature")
             }
-            Spacer(Modifier.height(12.dp))
-
+            Spacer(Modifier.height(24.dp))
+            QualityCheck(tds = sensorData.tds, ph = sensorData.ph, temp = sensorData.temperature)
         Button(onClick = { viewModel.fetchSimulateData() }) {
             Text("Update Data")
         }
