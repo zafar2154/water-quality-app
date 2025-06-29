@@ -15,36 +15,40 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.waterquality.ui.theme.BgGreen
+import com.example.waterquality.ui.theme.BgRed
 import com.example.waterquality.ui.theme.WaterQualityTheme
 
+fun isOverallSafe(ph: Float, tds: Float, temp: Float): Boolean =
+    ph in 6.5f..9.0f && tds < 1000f && temp in 21f..40f
+
+
 @Composable
-fun QualityCheck(tds: Float, ph: Float, temp: Float) {
-    val statusText = when {
-        ph in 6.5..9.0 && tds < 1000 && temp in 21.0 .. 40.0-> "Aman"
-        else -> "Tidak Aman"
-    }
+fun QualityCheck(ph: Float, tds: Float, temp: Float) {
+    val safe = isOverallSafe(ph, tds, temp)
+    val statusText = if(safe) "Aman" else "tidak aman"
+    val bgColor = if(safe) BgGreen else BgRed
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp)
-            .background(Color(0xFFE0F7FA), shape = RoundedCornerShape(12.dp))
-            .border(1.dp, Color(0xFF00ACC1), RoundedCornerShape(12.dp))
+            .background(bgColor.copy(0.4f), shape = RoundedCornerShape(12.dp))
+            .border(1.dp, bgColor, RoundedCornerShape(12.dp))
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = statusText,
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF00796B)
+            color = Color.Black
         )
     }
 
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewQualityCheck() {
     WaterQualityTheme {
-        QualityCheck(ph = 7.0f, tds = 400f, temp = 100f)
+        QualityCheck(ph = 4.0f, tds = 100.0f, temp = 30.0f)
     }
 }

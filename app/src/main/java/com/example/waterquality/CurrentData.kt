@@ -2,6 +2,7 @@ package com.example.waterquality
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -38,47 +39,40 @@ import com.example.waterquality.ui.theme.BgRed
 import com.example.waterquality.ui.theme.BgYellow
 import com.example.waterquality.ui.theme.WaterQualityTheme
 
+enum class SensorType {
+    pH, TDS, Temperature
+}
+fun getBackgroundColor(type: SensorType, value: Float): Color = when (type) {
+    SensorType.pH -> when {
+        value in 6.5f..9.0f -> BgGreen
+        else                 -> BgRed
+    }
+    SensorType.TDS -> when {
+        value < 600f        -> BgGreen
+        value in 600f..1000f-> BgYellow
+        else                -> BgRed
+    }
+    SensorType.Temperature -> when {
+        value < 21f         -> BgBlue
+        value in 21f..40f   -> BgGreen
+        else                -> BgRed
+    }
+}
+
 @Composable
 fun CurrentData(
     icon: Painter,
     value: Float,
-    desc: String
+    desc: SensorType
 ) {
-    val backgroundColorPh = when {
-        value in 6.5..9.0 -> BgGreen
-        else -> BgRed
-    }
-
-    val backgroundColorTds = when {
-        value < 600 -> BgGreen
-        value in 600.0..1000.0 -> BgYellow
-        else -> BgRed
-    }
-
-    val backgroundColorTemp = when {
-        value < 21 -> BgBlue
-        value in 21.0 .. 40.0 -> BgGreen
-        else -> BgRed
-    }
-
-    val backgroundMap = mapOf(
-        "pH" to backgroundColorPh,
-        "TDS" to backgroundColorTds,
-        "Temperature" to backgroundColorTemp
-    )
-
-    fun getBackground(desc: String): Color {
-        return backgroundMap[desc] ?: Color.Gray
-    }
-
-
     Column(
         modifier = Modifier
             .height(IntrinsicSize.Max)
             .width(100.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(getBackground(desc))
-            .padding(12.dp),
+            .background(getBackgroundColor(desc, value).copy(alpha = 0.4f))
+            .border(2.dp, getBackgroundColor(desc, value), RoundedCornerShape(16.dp))
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -101,7 +95,7 @@ fun CurrentData(
             )
             Text(
                 fontFamily = FontFamily(Font(R.font.roboto)),
-                text = desc,
+                text = desc.toString(),
                 fontWeight = FontWeight.Light,
                 fontSize = 10.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -117,6 +111,6 @@ fun CurrentData(
 fun PreviewCurrentData(viewModel: SensorViewModel = viewModel()) {
     val sensorData by viewModel.sensorData.collectAsState()
     WaterQualityTheme {
-        CurrentData(icon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview), value = 70.0f, desc = "Temperature")
+        CurrentData(icon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview), value = 70.0f, desc = SensorType.pH)
     }
 }
