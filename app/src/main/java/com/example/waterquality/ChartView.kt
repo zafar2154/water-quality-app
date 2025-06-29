@@ -2,11 +2,8 @@ package com.example.waterquality
 
 import android.graphics.Color
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,7 +32,6 @@ fun ChartView(
     granularityY: Float,
     labelCount: Int,
     values: List<Float>,
-    modifier: Modifier = Modifier
 ) {
     val windowSize = 10
     AndroidView(
@@ -111,10 +107,11 @@ fun PreviewChart(viewModel: SensorViewModel = viewModel()) {
         var tdsHistory by remember { mutableStateOf(listOf<Float>()) }
         var tempHistory by remember { mutableStateOf(listOf<Float>()) }
         LaunchedEffect(sensorData) {
-            phHistory = phHistory.takeLast(10) + sensorData.ph
-            tdsHistory = tdsHistory.takeLast(10) + sensorData.tds
-            tempHistory = tempHistory.takeLast(10) + sensorData.temperature
+            sensorData.ph?.takeIf { !it.isNaN() }?.let { phHistory = phHistory + it }
+            sensorData.tds?.takeIf { !it.isNaN() }?.let { tdsHistory = tdsHistory + it }
+            sensorData.temperature?.takeIf { !it.isNaN() }?.let { tempHistory = tempHistory + it }
         }
+
         Column {
             ChartView(
                 title = "TDS Level (ppm)",

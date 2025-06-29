@@ -78,12 +78,9 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
     val tempIcon = painterResource(R.drawable.pngtreevector_temperature_icon_4159827)
 
     LaunchedEffect(sensorData) {
-        phHistory = phHistory + sensorData.ph
-        tdsHistory = tdsHistory + sensorData.tds
-        tempHistory = tempHistory + sensorData.temperature
-    }
-    LaunchedEffect(Unit) {
-        viewModel.fetchSimulateData()
+        sensorData.ph?.takeIf { !it.isNaN() }?.let { phHistory = phHistory + it }
+        sensorData.tds?.takeIf { !it.isNaN() }?.let { tdsHistory = tdsHistory + it }
+        sensorData.temperature?.takeIf { !it.isNaN() }?.let { tempHistory = tempHistory + it }
     }
 
     Scaffold (
@@ -164,7 +161,6 @@ innerPadding ->
                         granularityY = 10f,
                         labelCount = 50,
                         lineColor = android.graphics.Color.YELLOW,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
               }
@@ -181,10 +177,7 @@ innerPadding ->
                 ymax = 1000f,
                 granularityY = 100f,
                 labelCount = 10,
-                lineColor = android.graphics.Color.GREEN,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-
+                lineColor = android.graphics.Color.GREEN
             )
         }
     }

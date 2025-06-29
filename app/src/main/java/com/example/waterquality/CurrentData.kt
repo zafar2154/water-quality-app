@@ -5,22 +5,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -62,16 +57,17 @@ fun getBackgroundColor(type: SensorType, value: Float): Color = when (type) {
 @Composable
 fun CurrentData(
     icon: Painter,
-    value: Float,
+    value: Float?,
     desc: SensorType
 ) {
+    val bgColor = value?.let { getBackgroundColor(desc, it) } ?: Color.LightGray
     Column(
         modifier = Modifier
             .height(IntrinsicSize.Max)
             .width(100.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(getBackgroundColor(desc, value).copy(alpha = 0.4f))
-            .border(2.dp, getBackgroundColor(desc, value), RoundedCornerShape(16.dp))
+            .background(bgColor.copy(alpha = 0.4f))
+            .border(2.dp, bgColor, RoundedCornerShape(16.dp))
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,7 +84,9 @@ fun CurrentData(
         ) {
             Text(
                 fontFamily = FontFamily(Font(R.font.roboto)),
-                text = value.toString(),
+                text = value?.let {
+                    if (it.isNaN()) "..." else "%.2f".format(it)
+                } ?: "...",
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -109,8 +107,7 @@ fun CurrentData(
 @Preview(showBackground = true)
 @Composable
 fun PreviewCurrentData(viewModel: SensorViewModel = viewModel()) {
-    val sensorData by viewModel.sensorData.collectAsState()
     WaterQualityTheme {
-        CurrentData(icon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview), value = 70.0f, desc = SensorType.pH)
+        CurrentData(icon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview), value = null, desc = SensorType.pH)
     }
 }

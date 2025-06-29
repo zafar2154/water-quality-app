@@ -2,7 +2,7 @@ import retrofit2.http.GET
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-data class SensorResponse(val ph: Float, val tds: Float, val temperature: Float)
+data class SensorResponse(val ph: Float?, val tds: Float?, val temperature: Float?)
 
 object ApiClient {
     private const val BASE_URL = "http://192.168.1.7"

@@ -23,10 +23,18 @@ fun isOverallSafe(ph: Float, tds: Float, temp: Float): Boolean =
 
 
 @Composable
-fun QualityCheck(ph: Float, tds: Float, temp: Float) {
-    val safe = isOverallSafe(ph, tds, temp)
-    val statusText = if(safe) "Aman" else "tidak aman"
-    val bgColor = if(safe) BgGreen else BgRed
+fun QualityCheck(ph: Float?, tds: Float?, temp: Float?) {
+    val (statusText, bgColor) = if (
+        ph == null || tds == null || temp == null ||
+        ph.isNaN() ||tds.isNaN() || temp.isNaN()
+    ) {
+        "Sensor Not Detected" to Color.LightGray
+    } else {
+        val safe = isOverallSafe(ph,tds,temp)
+        val status = if (safe) "aman" else "tidak aman"
+        val bgColor = if (safe) BgGreen else BgRed
+        status to bgColor
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
