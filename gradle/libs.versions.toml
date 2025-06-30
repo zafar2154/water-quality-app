@@ -1,6 +1,8 @@
 [versions]
 agp = "8.10.1"
 converterGson = "2.9.0"
+datastorePreferences = "1.0.0"
+datastorePreferencesVersion = "1.1.7"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -11,7 +13,7 @@ ktorClientJson = "2.3.0"
 ktorClientOkhttp = "2.3.4"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2025.06.00"
+composeBom = "2025.06.01"
 appcompat = "1.7.1"
 firebaseCrashlyticsBuildtools = "3.0.4"
 mpandroidchart = "v3.1.0"
@@ -19,8 +21,10 @@ retrofit = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesVersion" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+datastore-preferences = { module = "androididx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

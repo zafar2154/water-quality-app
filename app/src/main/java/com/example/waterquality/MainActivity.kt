@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -27,8 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,10 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.waterquality.ui.NavBar
 import com.example.waterquality.ui.theme.WaterQualityTheme
 
 class MainActivity : ComponentActivity() {
@@ -76,6 +75,7 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
     val phIcon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview)
     val tdsIcon = painterResource(R.drawable.screenshot_2025_06_12_233036_removebg_preview)
     val tempIcon = painterResource(R.drawable.pngtreevector_temperature_icon_4159827)
+    val context = LocalContext.current
 
     LaunchedEffect(sensorData) {
         sensorData.ph?.takeIf { !it.isNaN() }?.let { phHistory = phHistory + it }
@@ -83,17 +83,12 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
         sensorData.temperature?.takeIf { !it.isNaN() }?.let { tempHistory = tempHistory + it }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.loadIpAndStart(context)
+    }
+
     Scaffold (
-        topBar = {
-        TopAppBar(
-            title = { Text("WaterQuality", color = Color.White)},
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            ),
-            modifier = Modifier
-                .border(1.dp, Color.DarkGray)
-        )
-        },
+        topBar = { NavBar(viewModel)},
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets.safeDrawing
     ) {
@@ -115,9 +110,9 @@ innerPadding ->
             }
             Spacer(Modifier.height(24.dp))
             QualityCheck(sensorData.ph, sensorData.tds, sensorData.temperature)
-        Button(onClick = { viewModel.fetchSimulateData() }) {
-            Text("Update Data")
-        }
+
+        Button(onClick = { viewModel.fetchSensor() }) { Text("Update Data") }
+
             Spacer(Modifier.height(24.dp))
             HorizontalDivider(thickness = 1.dp, color =Color.Black)
             Spacer(Modifier.height(24.dp))

@@ -65,4 +65,5 @@ dependencies {
     implementation(libs.ktor.client.json)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
+    implementation(libs.androidx.datastore.preferences)
 }
