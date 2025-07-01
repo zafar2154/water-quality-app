@@ -73,7 +73,7 @@ fun WaterQualityApp(viewModel: SensorViewModel = viewModel()) {
     var tdsHistory by remember { mutableStateOf(listOf<Float>()) }
     var tempHistory by remember { mutableStateOf(listOf<Float>()) }
     val phIcon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview)
-    val tdsIcon = painterResource(R.drawable.screenshot_2025_06_12_233036_removebg_preview)
+    val tdsIcon = painterResource(R.drawable.download_analysis_water_drop_nature_liquid_blue_silhouette_style_icon_for_free_removebg_preview)
     val tempIcon = painterResource(R.drawable.pngtreevector_temperature_icon_4159827)
     val context = LocalContext.current
 
@@ -108,10 +108,9 @@ innerPadding ->
                     CurrentData(tdsIcon, sensorData.tds, SensorType.TDS)
                     CurrentData(tempIcon, sensorData.temperature, SensorType.Temperature)
             }
-            Spacer(Modifier.height(24.dp))
             QualityCheck(sensorData.ph, sensorData.tds, sensorData.temperature)
 
-        Button(onClick = { viewModel.fetchSensor() }) { Text("Update Data") }
+        Button(onClick = { viewModel.fetchSimulateData() }) { Text("Update Data") }
 
             Spacer(Modifier.height(24.dp))
             HorizontalDivider(thickness = 1.dp, color =Color.Black)

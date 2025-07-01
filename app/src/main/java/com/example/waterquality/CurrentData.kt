@@ -3,13 +3,18 @@ package com.example.waterquality
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -27,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.waterquality.ui.theme.BgBlue
 import com.example.waterquality.ui.theme.BgGreen
@@ -61,53 +67,60 @@ fun CurrentData(
     desc: SensorType
 ) {
     val bgColor = value?.let { getBackgroundColor(desc, it) } ?: Color.LightGray
-    Column(
+
+    Box(
         modifier = Modifier
-            .height(IntrinsicSize.Max)
             .width(100.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(bgColor.copy(alpha = 0.4f))
-            .border(2.dp, bgColor, RoundedCornerShape(16.dp))
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .height(140.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
+        // Gambar ditempatkan dulu, dengan posisi offset ke atas
         Image(
             painter = icon,
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier
-                .height(30.dp)
-                .aspectRatio(1f)
+                .size(60.dp)
+                .zIndex(1f)           // Pastikan gambar di atas
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column(modifier = Modifier.height(IntrinsicSize.Max)
+
+        // Box dengan border dan isi teks
+        Column(
+            modifier = Modifier
+                .padding(top = 25.dp) // Tambahkan padding agar teks tidak ketabrak gambar
+                .clip(RoundedCornerShape(16.dp))
+                .background(bgColor.copy(alpha = 0.4f))
+                .border(2.dp, bgColor, RoundedCornerShape(16.dp))
+                .width(100.dp)
+                .height(100.dp)
+                .zIndex(0f),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(40.dp)) // Spacer untuk kasih jarak dari gambar
             Text(
                 fontFamily = FontFamily(Font(R.font.roboto)),
                 text = value?.let {
                     if (it.isNaN()) "..." else "%.2f".format(it)
                 } ?: "...",
                 fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                fontSize = 12.sp
             )
             Text(
                 fontFamily = FontFamily(Font(R.font.roboto)),
                 text = desc.toString(),
                 fontWeight = FontWeight.Light,
-                fontSize = 10.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                fontSize = 12.sp
             )
         }
-        Spacer(modifier = Modifier.width(8.dp))
-        VerticalDivider(thickness = 1.dp)
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewCurrentData(viewModel: SensorViewModel = viewModel()) {
     WaterQualityTheme {
-        CurrentData(icon = painterResource(R.drawable.screenshot_2025_06_12_232854_removebg_preview), value = null, desc = SensorType.pH)
+        CurrentData(icon = painterResource(R.drawable.premium_vector___water_drop_logo_images_illustration_design_removebg_preview), value = null, desc = SensorType.pH)
     }
 }

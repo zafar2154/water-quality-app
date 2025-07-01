@@ -18,8 +18,8 @@ import kotlin.random.Random
 data class SensorData(val ph: Float?, val tds: Float?, val temperature: Float?)
 
 class SensorViewModel : ViewModel() {
-    private val _sensorData = MutableStateFlow(SensorResponse(null, null, null))
-    val sensorData: StateFlow<SensorResponse> = _sensorData
+    private val _sensorData = MutableStateFlow(SensorData(null, null, null))
+    val sensorData: StateFlow<SensorData> = _sensorData
 
     private var apiService: ApiService? = null
 
@@ -32,24 +32,31 @@ class SensorViewModel : ViewModel() {
             IpDataStore.getIp(context).collect { ip ->
                 if (ip.isNotBlank()) {
                     initApi(ip)
-                    fetchSensor()
+//                    fetchSimulateData()
                 }
             }
         }
     }
 
-    fun fetchSensor() {
-        viewModelScope.launch {
-            while (true) {
-                try {
-                    val result = apiService?.getUser()
-                    Log.d("DEBUG_API", "Hasil: $result")
-                    result?.let { _sensorData.value = it }
-                } catch (e: Exception) {
-                    Log.e("DEBUG_API", "Error: ${e.message}")
-                }
-                delay(500)
-            }
-        }
+    fun fetchSimulateData() {
+        _sensorData.value = SensorData(
+            ph = Random.nextInt(0, 14).toFloat(),
+            tds = Random.nextInt(100, 1000).toFloat(),
+            temperature = Random.nextInt(0, 70).toFloat()
+        )
     }
+//    fun fetchSensor() {
+//        viewModelScope.launch {
+//            while (true) {
+//                try {
+//                    val result = apiService?.getUser()
+//                    Log.d("DEBUG_API", "Hasil: $result")
+//                    result?.let { _sensorData.value = it }
+//                } catch (e: Exception) {
+//                    Log.e("DEBUG_API", "Error: ${e.message}")
+//                }
+//                delay(500)
+//            }
+//        }
+//    }
     }
