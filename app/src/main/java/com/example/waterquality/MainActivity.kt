@@ -110,9 +110,7 @@ innerPadding ->
             }
             QualityCheck(sensorData.ph, sensorData.tds, sensorData.temperature)
 
-        Button(onClick = { viewModel.fetchSimulateData() }) { Text("Update Data") }
-
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(12.dp))
             HorizontalDivider(thickness = 1.dp, color =Color.Black)
             Spacer(Modifier.height(24.dp))
 
@@ -178,10 +176,7 @@ innerPadding ->
 }
 
 
-@Preview(
-    showBackground = true,
-
-)
+@Preview(showBackground = true)
 @Composable
 fun PreviewApp() {
     WaterQualityTheme {

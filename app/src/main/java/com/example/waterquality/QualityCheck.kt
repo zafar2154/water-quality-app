@@ -19,7 +19,7 @@ import com.example.waterquality.ui.theme.BgRed
 import com.example.waterquality.ui.theme.WaterQualityTheme
 
 fun isOverallSafe(ph: Float, tds: Float, temp: Float): Boolean =
-    ph in 6.5f..9.0f && tds < 1000f && temp in 21f..40f
+    ph in 5.5f..9.0f && tds < 1000f && temp in 21f..40f
 
 
 @Composable

@@ -45,7 +45,7 @@ enum class SensorType {
 }
 fun getBackgroundColor(type: SensorType, value: Float): Color = when (type) {
     SensorType.pH -> when {
-        value in 6.5f..9.0f -> BgGreen
+        value in 5.5f..9.0f -> BgGreen
         else                 -> BgRed
     }
     SensorType.TDS -> when {
@@ -121,6 +121,6 @@ fun CurrentData(
 @Composable
 fun PreviewCurrentData(viewModel: SensorViewModel = viewModel()) {
     WaterQualityTheme {
-        CurrentData(icon = painterResource(R.drawable.premium_vector___water_drop_logo_images_illustration_design_removebg_preview), value = null, desc = SensorType.pH)
+        CurrentData(icon = painterResource(R.drawable.download_analysis_water_drop_nature_liquid_blue_silhouette_style_icon_for_free_removebg_preview), value = null, desc = SensorType.pH)
     }
 }
