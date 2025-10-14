@@ -1,18 +1,17 @@
-package com.example.waterquality
+package com.example.waterquality.ui.screen.homepage
 
-import ApiClient
-import ApiService
-import SensorResponse
+import com.example.waterquality.data.remote.ApiService
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.waterquality.data.model.SensorResponse
+import com.example.waterquality.data.remote.ApiClient
 import com.example.waterquality.storage.IpDataStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 
 data class SensorData(val ph: Float?, val tds: Float?, val temperature: Float?)

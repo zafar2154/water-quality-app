@@ -1,4 +1,4 @@
-package com.example.waterquality
+package com.example.waterquality.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

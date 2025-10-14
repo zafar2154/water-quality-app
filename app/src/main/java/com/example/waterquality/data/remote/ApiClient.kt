@@ -1,8 +1,8 @@
-import retrofit2.http.GET
+package com.example.waterquality.data.remote
+
+import com.example.waterquality.data.remote.ApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-data class SensorResponse(val ph: Float?, val tds: Float?, val temperature: Float?)
 
 object ApiClient {
     fun create(ipAddress: String): ApiService {
@@ -13,8 +13,4 @@ object ApiClient {
             .build()
             .create(ApiService::class.java)
     }
-}
-interface ApiService {
-    @GET("sensor")
-    suspend fun getUser(): SensorResponse
 }

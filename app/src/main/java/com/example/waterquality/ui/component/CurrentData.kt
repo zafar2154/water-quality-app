@@ -1,23 +1,17 @@
-package com.example.waterquality
+package com.example.waterquality.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.waterquality.R
+import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.ui.theme.BgBlue
 import com.example.waterquality.ui.theme.BgGreen
 import com.example.waterquality.ui.theme.BgRed
@@ -121,6 +117,6 @@ fun CurrentData(
 @Composable
 fun PreviewCurrentData(viewModel: SensorViewModel = viewModel()) {
     WaterQualityTheme {
-        CurrentData(icon = painterResource(R.drawable.download_analysis_water_drop_nature_liquid_blue_silhouette_style_icon_for_free_removebg_preview), value = null, desc = SensorType.pH)
+        CurrentData(icon = painterResource(R.drawable.logo_tds), value = null, desc = SensorType.pH)
     }
 }

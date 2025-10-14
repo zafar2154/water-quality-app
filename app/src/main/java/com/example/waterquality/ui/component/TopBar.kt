@@ -2,6 +2,7 @@
 package com.example.waterquality.ui
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
@@ -23,11 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.waterquality.SensorViewModel
+import androidx.compose.ui.unit.sp
+import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.storage.IpDataStore
-import com.example.waterquality.ui.theme.WaterQualityTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +60,12 @@ fun NavBar(viewModel: SensorViewModel) {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Set IP Address") },
+            title = {
+                Column {
+                    Text("Set IP Address")
+                    Text("Current : $ipAddress", fontSize = 15.sp, fontWeight = FontWeight.Light)
+                }
+                    },
             text = {
                 OutlinedTextField(
                     value = ipAddress,

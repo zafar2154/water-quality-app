@@ -1,4 +1,4 @@
-package com.example.waterquality
+package com.example.waterquality.ui.component
 
 import android.graphics.Color
 import androidx.compose.foundation.layout.Column
@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.ui.theme.WaterQualityTheme
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
