@@ -1,15 +1,21 @@
 package com.example.waterquality
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.waterquality.navigation.AppNavHost
+import com.example.waterquality.ui.screen.auth.AuthViewModel
 import com.example.waterquality.ui.theme.WaterQualityTheme
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +26,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier,
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavHost()
+                    val authViewModel: AuthViewModel = viewModel()
+                    AppNavHost(authViewModel = authViewModel)
                 }
             }
         }

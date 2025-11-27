@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.waterquality.ui.NavBar
+import com.example.waterquality.ui.component.NavBar
 import com.example.waterquality.ui.component.ChartView
 import com.example.waterquality.ui.component.CurrentData
 import com.example.waterquality.ui.component.QualityCheck

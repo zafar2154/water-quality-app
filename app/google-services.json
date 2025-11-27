@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "684999547840",
+    "project_id": "water-quality-b7b81",
+    "storage_bucket": "water-quality-b7b81.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684999547840:android:d7a0ac35e3d84b256b0625",
+        "android_client_info": {
+          "package_name": "com.example.waterquality"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAHlKnvzRYXIAflUxPoIO157nbrss0ocE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

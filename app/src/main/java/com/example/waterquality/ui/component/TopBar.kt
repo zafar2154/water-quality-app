@@ -1,5 +1,5 @@
 // ui/HeaderWithDialog.kt
-package com.example.waterquality.ui
+package com.example.waterquality.ui.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
