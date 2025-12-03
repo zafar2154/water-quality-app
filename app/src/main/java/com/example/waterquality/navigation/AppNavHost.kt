@@ -32,6 +32,12 @@ fun AppNavHost(
         }
         composable(Routes.HOME) {
             HomeScreen(
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0) // Hapus semua history backstack
+                    }
+                }
 //                onNavigateToMaps = { navController.navigate(Routes.Maps) },
 //                onLogout = {
 //                    authViewModel.logout()

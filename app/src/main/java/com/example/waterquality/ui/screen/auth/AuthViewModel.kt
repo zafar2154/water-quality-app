@@ -34,6 +34,11 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         }
     }
 
+    fun logout() {
+        repository.logout()
+        _loginState.value = null
+    }
+
     // Cek status login saat aplikasi baru dibuka
     fun isUserLoggedIn() = repository.isUserLoggedIn()
 

@@ -22,7 +22,10 @@ import com.example.waterquality.ui.theme.WaterQualityTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: SensorViewModel = viewModel()) {
+fun HomeScreen(
+    viewModel: SensorViewModel = viewModel(),
+    onLogout: () -> Unit
+) {
     val sensorData by viewModel.sensorData.collectAsState()
     val scrollState = rememberScrollState()
     var phHistory by remember { mutableStateOf(listOf<Float>()) }
@@ -45,7 +48,7 @@ fun HomeScreen(viewModel: SensorViewModel = viewModel()) {
     }
 
     Scaffold(
-        topBar = { NavBar(viewModel) },
+        topBar = { NavBar(viewModel, onLogout) },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
@@ -130,6 +133,6 @@ fun HomeScreen(viewModel: SensorViewModel = viewModel()) {
 @Composable
 fun HomeScreenPreview() {
     WaterQualityTheme {
-        HomeScreen()
+        HomeScreen(onLogout = {})
     }
 }

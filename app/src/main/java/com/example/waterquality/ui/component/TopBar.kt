@@ -4,7 +4,7 @@ package com.example.waterquality.ui.component
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,13 +29,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.storage.IpDataStore
+import com.example.waterquality.ui.component.auth.ProfilePopUp
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavBar(viewModel: SensorViewModel) {
+fun NavBar(
+    viewModel: SensorViewModel,
+    onLogout: () -> Unit
+    ) {
     var showDialog by remember { mutableStateOf(false) }
     var ipAddress by remember { mutableStateOf("") }
+    var showIpDialog by remember { mutableStateOf(false) }      // State untuk IP Settings (yang lama)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -49,7 +54,7 @@ fun NavBar(viewModel: SensorViewModel) {
         actions = {
             IconButton(onClick = {showDialog = true}) {
                 Icon(
-                    imageVector = Icons.Default.Settings,
+                    imageVector = Icons.Default.AccountCircle,
                     tint = Color.White,
                     contentDescription = "Settings"
                 )
@@ -58,8 +63,18 @@ fun NavBar(viewModel: SensorViewModel) {
 
     )
     if (showDialog) {
+        ProfilePopUp(
+            onDismiss = { showDialog = false },
+            onSettingsClick = { showDialog = false },
+            onLogoutClick = {
+                showDialog = false
+                onLogout()
+            }
+        )
+    }
+    if (showIpDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showIpDialog = false },
             title = {
                 Column {
                     Text("Set IP Address")
