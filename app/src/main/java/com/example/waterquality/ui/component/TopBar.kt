@@ -27,20 +27,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.storage.IpDataStore
 import com.example.waterquality.ui.component.auth.ProfilePopUp
+import com.example.waterquality.ui.screen.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavBar(
     viewModel: SensorViewModel,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    username: String,
+    email: String,
     ) {
+
     var showDialog by remember { mutableStateOf(false) }
     var ipAddress by remember { mutableStateOf("") }
-    var showIpDialog by remember { mutableStateOf(false) }      // State untuk IP Settings (yang lama)
+    var showIpDialog by remember { mutableStateOf(false) }
+    var showProfileDialog by remember { mutableStateOf(false) }
+
+    // AMBIL DATA USER DARI VIEWMOD
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -65,11 +73,13 @@ fun NavBar(
     if (showDialog) {
         ProfilePopUp(
             onDismiss = { showDialog = false },
-            onSettingsClick = { showDialog = false },
+            onSettingsClick = { showIpDialog = true },
             onLogoutClick = {
-                showDialog = false
                 onLogout()
-            }
+                showDialog=false
+            },
+            username = username,
+            email = email
         )
     }
     if (showIpDialog) {
@@ -91,7 +101,7 @@ fun NavBar(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    showDialog = false
+                    showIpDialog = false
                     viewModel.initApi(ipAddress)
                     scope.launch {
                         IpDataStore.saveIp(context, ipAddress)
@@ -101,7 +111,7 @@ fun NavBar(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = { showIpDialog = false }) {
                     Text("Batal")
                 }
             }

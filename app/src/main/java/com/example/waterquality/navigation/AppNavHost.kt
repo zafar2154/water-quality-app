@@ -2,6 +2,7 @@ package com.example.waterquality.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,9 +16,12 @@ import com.example.waterquality.ui.screen.homepage.HomeScreen
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    authViewModel: AuthViewModel// Pass ViewModel untuk cek status login awal
+    authViewModel: AuthViewModel = viewModel ()// Pass ViewModel untuk cek status login awal
 ) {
     val startDestination = if (authViewModel.isUserLoggedIn()) Routes.HOME else Routes.LOGIN
+    val currentUser = authViewModel.currentUser
+    val username = currentUser?.displayName ?: "No Name"
+    val email = currentUser?.email ?: "No Email"// State untuk IP Settings (yang lama)
 
     NavHost(
         navController = navController,
@@ -37,7 +41,9 @@ fun AppNavHost(
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(0) // Hapus semua history backstack
                     }
-                }
+                },
+                username = username,
+                email = email
 //                onNavigateToMaps = { navController.navigate(Routes.Maps) },
 //                onLogout = {
 //                    authViewModel.logout()

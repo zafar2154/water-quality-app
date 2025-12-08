@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.waterquality.data.repository.AuthRepository
 import com.example.waterquality.utils.Resource
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,12 +18,13 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
     private val _loginState = MutableStateFlow<Resource<String>?>(null)
+
     val loginState = _loginState.asStateFlow()
 
-    fun register(email: String, pass: String) {
+    fun register(email: String, pass: String, username: String) {
         _loginState.value = Resource.Loading()
         viewModelScope.launch {
-            val result = repository.register(email, pass)
+            val result = repository.register(email, pass, username)
             _loginState.value = result // Update state UI
         }
     }
@@ -45,4 +47,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     fun clearError() {
         _errorMessage.value = null
     }
+    // Properti untuk mengambil user saat ini
+    val currentUser: FirebaseUser?
+        get() = repository.getCurrentUser()
 }

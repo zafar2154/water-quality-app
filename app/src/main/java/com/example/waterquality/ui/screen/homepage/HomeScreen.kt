@@ -18,13 +18,16 @@ import com.example.waterquality.ui.component.ChartView
 import com.example.waterquality.ui.component.CurrentData
 import com.example.waterquality.ui.component.QualityCheck
 import com.example.waterquality.ui.component.SensorType
+import com.example.waterquality.ui.screen.auth.AuthViewModel
 import com.example.waterquality.ui.theme.WaterQualityTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: SensorViewModel = viewModel(),
-    onLogout: () -> Unit
+    onLogout: () -> Unit = {},
+    username: String,
+    email: String
 ) {
     val sensorData by viewModel.sensorData.collectAsState()
     val scrollState = rememberScrollState()
@@ -48,7 +51,7 @@ fun HomeScreen(
     }
 
     Scaffold(
-        topBar = { NavBar(viewModel, onLogout) },
+        topBar = { NavBar(viewModel, onLogout = onLogout, username = username, email = email) },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
@@ -126,13 +129,5 @@ fun HomeScreen(
                 lineColor = android.graphics.Color.GREEN
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    WaterQualityTheme {
-        HomeScreen(onLogout = {})
     }
 }

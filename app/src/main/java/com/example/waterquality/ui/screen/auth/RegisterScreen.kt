@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,6 +37,8 @@ import com.example.waterquality.utils.Resource
 fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel = viewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+
     val loginState by authViewModel.loginState.collectAsState()
     val context = LocalContext.current
 
@@ -63,7 +66,13 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel = 
     ) {
         Text("Daftar Akun", style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(16.dp))
-
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Nama Lengkap / Username") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
@@ -82,7 +91,7 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel = 
         Button(
             onClick = {
                 authViewModel.clearError() // Bersihkan error lama sebelum mencoba lagi
-                authViewModel.register(email, password)
+                authViewModel.register(email, password, username)
             },
             enabled = loginState !is Resource.Loading
         ) {

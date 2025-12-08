@@ -19,10 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.waterquality.ui.screen.auth.AuthViewModel
 import com.example.waterquality.ui.theme.WaterQualityTheme
 
 @Composable
 fun ProfilePopUp(
+    username: String,
+    email: String,
     onDismiss: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
@@ -31,7 +35,9 @@ fun ProfilePopUp(
         ProfilePopUpContent( // Call the extracted content here
             onDismiss = onDismiss,
             onSettingsClick = onSettingsClick,
-            onLogoutClick = onLogoutClick
+            onLogoutClick = onLogoutClick,
+            username = username,
+            email = email
         )
     }
 }
@@ -39,6 +45,8 @@ fun ProfilePopUp(
 // Extracted content composable
 @Composable
 fun ProfilePopUpContent(
+    username: String,
+    email: String,
     onDismiss: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
@@ -73,13 +81,13 @@ fun ProfilePopUpContent(
 
             // 2. Nama Profile
             Text(
-                text = "Admin User",
+                text = username.ifEmpty { "user" },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "admin@waterquality.com",
+                text = email.ifEmpty { "email" },
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -152,7 +160,9 @@ fun ProfilePopUpContentPreview() {
             ProfilePopUpContent(
                 onDismiss = {},
                 onSettingsClick = {},
-                onLogoutClick = {}
+                onLogoutClick = {},
+                username = "Preview User",
+                email = "preview@email.com",
             )
         }
     }
