@@ -19,20 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.waterquality.ui.screen.homepage.SensorViewModel
-import com.example.waterquality.storage.IpDataStore
 import com.example.waterquality.ui.component.auth.ProfilePopUp
-import com.example.waterquality.ui.screen.auth.AuthViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,10 +41,6 @@ fun NavBar(
     var ipAddress by remember { mutableStateOf("") }
     var showIpDialog by remember { mutableStateOf(false) }
     var showProfileDialog by remember { mutableStateOf(false) }
-
-    // AMBIL DATA USER DARI VIEWMOD
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     TopAppBar(
         title = { Text("WaterQuality", color = Color.White) },
@@ -68,8 +58,9 @@ fun NavBar(
                 )
             }
         }
-
     )
+
+//    PopUp Profile
     if (showDialog) {
         ProfilePopUp(
             onDismiss = { showDialog = false },
@@ -82,6 +73,8 @@ fun NavBar(
             email = email
         )
     }
+
+//    Dialog ganti ip
     if (showIpDialog) {
         AlertDialog(
             onDismissRequest = { showIpDialog = false },
@@ -102,9 +95,8 @@ fun NavBar(
             confirmButton = {
                 TextButton(onClick = {
                     showIpDialog = false
-                    viewModel.initApi(ipAddress)
-                    scope.launch {
-                        IpDataStore.saveIp(context, ipAddress)
+                    if (ipAddress.isNotBlank()) {
+                        viewModel.saveIpAddress(ipAddress)
                     }
                 }) {
                     Text("Simpan")

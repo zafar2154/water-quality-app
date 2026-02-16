@@ -29,7 +29,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         }
     }
     fun login(email: String, pass: String) {
-        _loginState.value = Resource.Loading() // Set loading dulu
+        _loginState.value = Resource.Loading()
         viewModelScope.launch {
             val result = repository.login(email, pass)
             _loginState.value = result

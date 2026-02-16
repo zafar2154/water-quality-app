@@ -13,7 +13,6 @@ import com.example.waterquality.navigation.AppNavHost
 import com.example.waterquality.ui.screen.auth.AuthViewModel
 import com.example.waterquality.ui.theme.WaterQualityTheme
 import dagger.hilt.android.AndroidEntryPoint
-import jakarta.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
