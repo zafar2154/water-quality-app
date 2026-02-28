@@ -101,22 +101,14 @@ fun ChartView(
 
 @Preview(showBackground = true )
 @Composable
-fun PreviewChart(viewModel: SensorViewModel = viewModel()) {
+fun PreviewChart() {
     WaterQualityTheme {
-        val sensorData by viewModel.sensorData.collectAsState()
-        var phHistory by remember { mutableStateOf(listOf<Float>()) }
-        var tdsHistory by remember { mutableStateOf(listOf<Float>()) }
-        var tempHistory by remember { mutableStateOf(listOf<Float>()) }
-        LaunchedEffect(sensorData) {
-            sensorData.ph?.takeIf { !it.isNaN() }?.let { phHistory = phHistory + it }
-            sensorData.tds?.takeIf { !it.isNaN() }?.let { tdsHistory = tdsHistory + it }
-            sensorData.temperature?.takeIf { !it.isNaN() }?.let { tempHistory = tempHistory + it }
-        }
+        val dummyTdsValues = listOf(1.0f, 2.0f, 3.0f, 4.0f, 5.0f)
 
         Column {
             ChartView(
                 title = "TDS Level (ppm)",
-                values = tdsHistory,
+                values = dummyTdsValues,
                 ymax = 10f,
                 granularityY = 1f,
                 labelCount = 100,

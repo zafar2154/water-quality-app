@@ -31,7 +31,7 @@ import com.example.waterquality.ui.component.auth.ProfilePopUp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavBar(
-    viewModel: SensorViewModel,
+    onSaveIpAddress: (String) -> Unit,
     onLogout: () -> Unit,
     username: String,
     email: String,
@@ -96,7 +96,7 @@ fun NavBar(
                 TextButton(onClick = {
                     showIpDialog = false
                     if (ipAddress.isNotBlank()) {
-                        viewModel.saveIpAddress(ipAddress)
+                        onSaveIpAddress(ipAddress)
                     }
                 }) {
                     Text("Simpan")

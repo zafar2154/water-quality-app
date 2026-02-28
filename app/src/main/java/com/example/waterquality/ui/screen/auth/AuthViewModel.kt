@@ -19,17 +19,40 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     val errorMessage: StateFlow<String?> = _errorMessage
     private val _loginState = MutableStateFlow<Resource<String>?>(null)
 
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email.asStateFlow()
+    private val _password = MutableStateFlow("")
+    val password: StateFlow<String> = _password.asStateFlow()
+    private val _username = MutableStateFlow("")
+    val username: StateFlow<String> = _username.asStateFlow()
     val loginState = _loginState.asStateFlow()
 
-    fun register(email: String, pass: String, username: String) {
+    fun onUsernameChange(newUsername: String) {
+        _username.value = newUsername
+    }
+
+    fun onEmailChange(newEmail: String) {
+        _email.value = newEmail
+    }
+
+    fun onPasswordChange(newPassword: String) {
+        _password.value = newPassword
+    }
+
+    fun register() {
         _loginState.value = Resource.Loading()
+        val email = _email.value
+        val pass = _password.value
+        val username = _username.value
         viewModelScope.launch {
             val result = repository.register(email, pass, username)
             _loginState.value = result // Update state UI
         }
     }
-    fun login(email: String, pass: String) {
+    fun login() {
         _loginState.value = Resource.Loading()
+        val email = _email.value
+        val pass = _password.value
         viewModelScope.launch {
             val result = repository.login(email, pass)
             _loginState.value = result

@@ -11,26 +11,34 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.waterquality.navigation.Routes
 import com.example.waterquality.utils.Resource
+import com.example.waterquality.ui.theme.WaterQualityTheme
 
+// ==========================================
+// 1. STATEFUL COMPONENT
+// ==========================================
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = viewModel()) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun LoginScreen(
+    navController: NavController,
+    // Menggunakan hiltViewModel agar sejalan dengan optimasi sebelumnya
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
+    // Collect semua State dari ViewModel
+    val email by authViewModel.email.collectAsState()
+    val password by authViewModel.password.collectAsState()
     val loginState by authViewModel.loginState.collectAsState()
-    val context = LocalContext.current
-
-    // Mengamati state dari ViewModel
     val errorMessage by authViewModel.errorMessage.collectAsState()
 
+    val context = LocalContext.current
+    val isLoading = loginState is Resource.Loading
+
+    // Menangani Efek Samping (Navigasi & Toast)
     LaunchedEffect(loginState) {
         when (val state = loginState) {
             is Resource.Success -> {
-                // Jika sukses, pindah ke Home & hapus Login dari backstack
                 navController.navigate(Routes.HOME) {
                     popUpTo(Routes.LOGIN) { inclusive = true }
                 }
@@ -42,22 +50,62 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = vie
         }
     }
 
+    // Panggil komponen Stateless dan lempar semua data & aksinya
+    LoginScreenContent(
+        email = email,
+        password = password,
+        onEmailChange = { authViewModel.onEmailChange(it) },
+        onPasswordChange = { authViewModel.onPasswordChange(it) },
+        onLoginClick = {
+            authViewModel.clearError()
+            authViewModel.login() // Tidak perlu lempar parameter lagi
+        },
+        onNavigateToRegister = { navController.navigate("register") },
+        isLoading = isLoading,
+        errorMessage = errorMessage
+    )
+}
+
+
+// ==========================================
+// 2. STATELESS COMPONENT (Bodoh - Murni UI)
+// ==========================================
+@Composable
+fun LoginScreenContent(
+    email: String,
+    password: String,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    isLoading: Boolean,
+    errorMessage: String?
+) {
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Login", style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
+        OutlinedTextField(
+            value = email,
+            onValueChange = onEmailChange,
+            label = { Text("Email") },
+            singleLine = true
+        )
         Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = onPasswordChange,
             label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            singleLine = true
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -68,27 +116,44 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = vie
         }
 
         Button(
-            onClick = {
-                authViewModel.clearError() // Bersihkan error lama sebelum mencoba lagi
-                authViewModel.login(email, password)
-            },
-            enabled = loginState !is Resource.Loading
+            onClick = onLoginClick,
+            // Opsional: Tombol otomatis disabled jika form kosong atau sedang loading
+            enabled = !isLoading && email.isNotBlank() && password.isNotBlank()
         ) {
-            if (loginState is Resource.Loading) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             } else {
                 Text("Login")
             }
         }
 
-        TextButton(onClick = { navController.navigate("register") }) {
+        TextButton(onClick = onNavigateToRegister) {
             Text("Belum punya akun? Daftar di sini")
         }
     }
 }
 
-@Preview
+
+// ==========================================
+// 3. PREVIEW
+// ==========================================
+@Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(navController = rememberNavController())
+    WaterQualityTheme {
+        // Cukup panggil yang Stateless, masukkan data palsu
+        LoginScreenContent(
+            email = "afit@example.com",
+            password = "mypassword123",
+            onEmailChange = {},
+            onPasswordChange = {},
+            onLoginClick = {},
+            onNavigateToRegister = {},
+            isLoading = false,
+            errorMessage = null // Coba isi dengan "Email salah" untuk tes UI error
+        )
+    }
 }

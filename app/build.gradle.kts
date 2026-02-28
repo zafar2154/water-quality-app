@@ -79,6 +79,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
 
 kotlin {

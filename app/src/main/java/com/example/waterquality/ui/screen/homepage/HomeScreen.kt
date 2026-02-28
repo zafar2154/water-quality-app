@@ -8,47 +8,48 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.waterquality.R
+import com.example.waterquality.data.model.SensorResponse
 import com.example.waterquality.ui.component.NavBar
 import com.example.waterquality.ui.component.ChartView
 import com.example.waterquality.ui.component.CurrentData
 import com.example.waterquality.ui.component.QualityCheck
 import com.example.waterquality.ui.component.SensorType
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    // HILT MAGIC:
-    // Fungsi viewModel() ini akan otomatis meminta Hilt untuk membuatkan
-    // SensorViewModel beserta semua dependency-nya (Repository, ApiService, dll).
-    viewModel: SensorViewModel = viewModel(),
+    viewModel: SensorViewModel = hiltViewModel(),
     onLogout: () -> Unit = {},
     username: String,
-    email: String
+    email: String,
+){
+    val uiState by viewModel.sensorData.collectAsState()
+    HomeScreenContent(
+        uiState = uiState,
+        onLogout = onLogout,
+        username = username,
+        email = email,
+        onSaveIpAddress = {ip -> viewModel.saveIpAddress(ip)}
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenContent(
+    uiState: HomeUiState,
+    onLogout: () -> Unit = {},
+    username: String,
+    email: String,
+    onSaveIpAddress: (String) -> Unit
 ) {
-    // Mengambil data dari StateFlow di ViewModel
-    // gunakan lifecycle-aware collection jika memungkinkan, tapi collectAsState() cukup untuk dasar
-    val sensorData by viewModel.sensorData.collectAsState()
-
+    val sensorData = uiState.currentData
     val scrollState = rememberScrollState()
-
-    // State untuk grafik (History data sementara)
-    var phHistory by remember { mutableStateOf(listOf<Float>()) }
-    var tdsHistory by remember { mutableStateOf(listOf<Float>()) }
-    var tempHistory by remember { mutableStateOf(listOf<Float>()) }
-
     val phIcon = painterResource(R.drawable.logo_ph)
     val tdsIcon = painterResource(R.drawable.logo_tds)
     val tempIcon = painterResource(R.drawable.logo_temp)
-
-    // LOGIC GRAFIK: Menambahkan data ke list setiap kali ada data sensor baru
-    LaunchedEffect(sensorData) {
-        sensorData.ph?.takeIf { !it.isNaN() }?.let { phHistory = phHistory + it }
-        sensorData.tds?.takeIf { !it.isNaN() }?.let { tdsHistory = tdsHistory + it }
-        sensorData.temperature?.takeIf { !it.isNaN() }?.let { tempHistory = tempHistory + it }
-    }
 
     // CATATAN:
     // Kita MENGHAPUS 'LaunchedEffect(Unit) { viewModel.loadIpAndStart(context) }'
@@ -56,7 +57,7 @@ fun HomeScreen(
 
     Scaffold(
         // Kita melempar viewModel ke NavBar agar NavBar bisa mengakses fungsi ganti IP
-        topBar = { NavBar(viewModel, onLogout = onLogout, username = username, email = email) },
+        topBar = { NavBar(onSaveIpAddress = onSaveIpAddress, onLogout = onLogout, username = username, email = email) },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
@@ -102,7 +103,7 @@ fun HomeScreen(
                     Text("PH Graph", modifier = Modifier.align(Alignment.CenterHorizontally))
                     ChartView(
                         title = "PH Level",
-                        values = phHistory,
+                        values = uiState.phHistory,
                         ymax = 14f,
                         granularityY = 1f,
                         labelCount = 7,
@@ -119,7 +120,7 @@ fun HomeScreen(
                     Text("Temp Chart", modifier = Modifier.align(Alignment.CenterHorizontally))
                     ChartView(
                         title = "Temperature Level (C)",
-                        values = tempHistory,
+                        values = uiState.tempHistory,
                         ymax = 100f,
                         granularityY = 10f,
                         labelCount = 10, // Disesuaikan agar tidak terlalu padat
@@ -134,7 +135,7 @@ fun HomeScreen(
             Text("TDS Graph", modifier = Modifier.align(Alignment.CenterHorizontally))
             ChartView(
                 title = "TDS Level (ppm)",
-                values = tdsHistory,
+                values = uiState.tdsHistory,
                 ymax = 1000f,
                 granularityY = 100f,
                 labelCount = 10,
@@ -142,4 +143,21 @@ fun HomeScreen(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreenContent(
+        uiState = HomeUiState(
+            currentData = SensorResponse(ph = 7.2f, tds = 150f, temperature = 28.5f),
+            phHistory = listOf(6.8f, 7.0f, 7.1f, 7.2f, 7.3f),
+            tdsHistory = listOf(140f, 145f, 148f, 150f),
+            tempHistory = listOf(28.0f, 28.2f, 28.4f, 28.5f)
+        ),
+        username = "Afit",
+        email = "afit@example.com",
+        onLogout = {},
+        onSaveIpAddress = {}
+    )
 }
