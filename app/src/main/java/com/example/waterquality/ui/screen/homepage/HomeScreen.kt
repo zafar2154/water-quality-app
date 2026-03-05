@@ -13,12 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.waterquality.R
 import com.example.waterquality.data.model.SensorResponse
+import com.example.waterquality.data.model.SensorType
 import com.example.waterquality.ui.component.NavBar
 import com.example.waterquality.ui.component.ChartView
 import com.example.waterquality.ui.component.CurrentData
 import com.example.waterquality.ui.component.QualityCheck
-import com.example.waterquality.ui.component.SensorType
-
 @Composable
 fun HomeScreen(
     viewModel: SensorViewModel = hiltViewModel(),
@@ -73,7 +72,7 @@ fun HomeScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
             ) {
-                CurrentData(phIcon, sensorData.ph, SensorType.pH)
+                CurrentData(phIcon, sensorData.ph, SensorType.PH)
                 CurrentData(tdsIcon, sensorData.tds, SensorType.TDS)
                 CurrentData(tempIcon, sensorData.temperature, SensorType.Temperature)
             }

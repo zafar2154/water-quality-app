@@ -17,24 +17,13 @@ import androidx.compose.ui.unit.dp
 import com.example.waterquality.ui.theme.BgGreen
 import com.example.waterquality.ui.theme.BgRed
 import com.example.waterquality.ui.theme.WaterQualityTheme
-
-fun isOverallSafe(ph: Float, tds: Float, temp: Float): Boolean =
-    ph in 5.5f..9.0f && tds < 1000f && temp in 21f..40f
-
+import com.example.waterquality.utils.QualityWaterCheck
 
 @Composable
 fun QualityCheck(ph: Float?, tds: Float?, temp: Float?) {
-    val (statusText, bgColor) = if (
-        ph == null || tds == null || temp == null ||
-        ph.isNaN() ||tds.isNaN() || temp.isNaN()
-    ) {
-        "Sensor Not Detected" to Color.LightGray
-    } else {
-        val safe = isOverallSafe(ph,tds,temp)
-        val status = if (safe) "aman" else "tidak aman"
-        val bgColor = if (safe) BgGreen else BgRed
-        status to bgColor
-    }
+    val status = QualityWaterCheck.evaluate(ph, tds, temp)
+    val bgColor = status.composeColor
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +34,7 @@ fun QualityCheck(ph: Float?, tds: Float?, temp: Float?) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = statusText,
+            text = status.label,
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Black
         )
@@ -57,6 +46,6 @@ fun QualityCheck(ph: Float?, tds: Float?, temp: Float?) {
 @Composable
 fun PreviewQualityCheck() {
     WaterQualityTheme {
-        QualityCheck(ph = 4.0f, tds = 100.0f, temp = 30.0f)
+        QualityCheck(ph = 6.0f, tds = 60.0f, temp = 30.0f)
     }
 }

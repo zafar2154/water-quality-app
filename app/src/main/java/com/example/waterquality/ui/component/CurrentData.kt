@@ -29,32 +29,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.waterquality.R
+import com.example.waterquality.data.model.SensorType
 import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.ui.theme.BgBlue
 import com.example.waterquality.ui.theme.BgGreen
 import com.example.waterquality.ui.theme.BgRed
 import com.example.waterquality.ui.theme.BgYellow
 import com.example.waterquality.ui.theme.WaterQualityTheme
+import com.example.waterquality.utils.QualityWaterCheck
 
-enum class SensorType {
-    pH, TDS, Temperature
-}
-fun getBackgroundColor(type: SensorType, value: Float): Color = when (type) {
-    SensorType.pH -> when {
-        value in 5.5f..9.0f -> BgGreen
-        else                 -> BgRed
-    }
-    SensorType.TDS -> when {
-        value < 600f        -> BgGreen
-        value in 600f..1000f-> BgYellow
-        else                -> BgRed
-    }
-    SensorType.Temperature -> when {
-        value < 21f         -> BgBlue
-        value in 21f..40f   -> BgGreen
-        else                -> BgRed
-    }
-}
+
 
 @Composable
 fun CurrentData(
@@ -62,7 +46,8 @@ fun CurrentData(
     value: Float?,
     desc: SensorType
 ) {
-    val bgColor = value?.let { getBackgroundColor(desc, it) } ?: Color.LightGray
+    val status = QualityWaterCheck.evaluateSensor(desc, value)
+    val bgColor = status.composeColor
 
     Box(
         modifier = Modifier
@@ -115,8 +100,8 @@ fun CurrentData(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewCurrentData(viewModel: SensorViewModel = viewModel()) {
+fun PreviewCurrentData() {
     WaterQualityTheme {
-        CurrentData(icon = painterResource(R.drawable.logo_tds), value = null, desc = SensorType.pH)
+        CurrentData(icon = painterResource(R.drawable.logo_tds), value = 7.0f, desc = SensorType.PH)
     }
 }

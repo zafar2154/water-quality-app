@@ -2,7 +2,6 @@ package com.example.waterquality.ui.screen.homepage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.waterquality.data.model.SensorResponse
 import com.example.waterquality.data.repository.SensorRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
