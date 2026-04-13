@@ -1,3 +1,5 @@
+// In zafar2154/.../ui/screen/maps/Maps.kt
+
 package com.example.waterquality.ui.screen.maps
 
 import android.content.Context
@@ -32,16 +34,20 @@ fun OsmMapView(
                 // set posisi awal (Jakarta)
                 controller.setZoom(12.0)
                 controller.setCenter(GeoPoint(-6.2088, 106.8456))
-
-                // Tambahkan marker dari parameter points
-                points.forEach { (lat, lon) ->
-                    val marker = Marker(this)
-                    marker.position = GeoPoint(lat, lon)
-                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                    marker.title = "Sensor @ ($lat, $lon)"
-                    overlays.add(marker)
-                }
             }
+        },
+        update = { mapView ->
+            // 2. Tambahkan marker baru berdasarkan data terbaru
+            points.forEach { (lat, lon) ->
+                val marker = Marker(mapView)
+                marker.position = GeoPoint(lat, lon)
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                marker.title = "Sensor @ ($lat, $lon)"
+                mapView.overlays.add(marker)
+            }
+
+            // 3. Wajib panggil invalidate() agar MapView menggambar ulang UI-nya
+            mapView.invalidate()
         },
         modifier = modifier.fillMaxSize()
     )

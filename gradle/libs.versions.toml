@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.3"
+agp = "9.1.0"
 converterGson = "3.0.0"
 datastorePreferences = "1.0.0"
 datastorePreferencesVersion = "1.2.0"
@@ -20,11 +20,12 @@ firebaseCrashlyticsBuildtools = "3.0.6"
 mapsCompose = "6.12.2"
 mapsComposeUtils = "6.12.2"
 mpandroidchart = "v3.1.0"
+osmdroidAndroid = "6.1.20"
 retrofit = "3.0.0"
 navigationRuntimeKtx = "2.9.6"
 navigationCompose = "2.9.6"
 hilt = "2.57.2"
-ksp = "2.2.10-2.0.2"
+ksp = "2.3.2"
 hiltNavigationCompose = "1.2.0"
 
 [libraries]
@@ -58,6 +59,7 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "mapsComposeUtils" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }

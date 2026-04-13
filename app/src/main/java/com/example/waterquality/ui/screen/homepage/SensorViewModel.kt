@@ -26,7 +26,7 @@ class SensorViewModel @Inject constructor(
     private fun observeSensorData() {
         viewModelScope.launch {
             repository.getSensorStream().collect { data ->
-                _sensorData.update{ currentState ->
+                _sensorData.update { currentState ->
                     val newPhHistory = if (data.ph != null && !data.ph.isNaN()) {
                         (currentState.phHistory + data.ph).takeLast(50)
                     } else currentState.phHistory
@@ -35,14 +35,26 @@ class SensorViewModel @Inject constructor(
                         (currentState.tdsHistory + data.tds).takeLast(50)
                     } else currentState.tdsHistory
 
-                    val newTempHistory = if (data.temperature != null && !data.temperature.isNaN()) {
-                        (currentState.tempHistory + data.temperature).takeLast(50)
-                    } else currentState.tempHistory
+                    val newTempHistory =
+                        if (data.temperature != null && !data.temperature.isNaN()) {
+                            (currentState.tempHistory + data.temperature).takeLast(50)
+                        } else currentState.tempHistory
+
+
+                    val newLocationHistory = if (data.lat != null && data.lon != null) {
+                        val newPoint = Pair(data.lat, data.lon)
+                        // Tambahkan titik hanya jika sensor benar-benar bergerak untuk mencegah penanda yang tumpang tindih
+                        if (currentState.locationHistory.lastOrNull() != newPoint) {
+                            (currentState.locationHistory + newPoint).takeLast(50)
+                        } else currentState.locationHistory
+                    } else currentState.locationHistory
+
                     currentState.copy(
                         currentData = data,
                         phHistory = newPhHistory,
                         tdsHistory = newTdsHistory,
-                        tempHistory = newTempHistory
+                        tempHistory = newTempHistory,
+                        locationHistory = newLocationHistory
                     )
                 }
             }

@@ -24,6 +24,7 @@ fun HomeScreen(
     onLogout: () -> Unit = {},
     username: String,
     email: String,
+    onNavigateToMaps: () -> Unit = {},
 ){
     val uiState by viewModel.sensorData.collectAsState()
     HomeScreenContent(
@@ -31,7 +32,8 @@ fun HomeScreen(
         onLogout = onLogout,
         username = username,
         email = email,
-        onSaveIpAddress = {ip -> viewModel.saveIpAddress(ip)}
+        onSaveIpAddress = {ip -> viewModel.saveIpAddress(ip)},
+        onNavigateToMaps = onNavigateToMaps
     )
 }
 
@@ -42,7 +44,8 @@ fun HomeScreenContent(
     onLogout: () -> Unit = {},
     username: String,
     email: String,
-    onSaveIpAddress: (String) -> Unit
+    onSaveIpAddress: (String) -> Unit,
+    onNavigateToMaps: () -> Unit = {}
 ) {
     val sensorData = uiState.currentData
     val scrollState = rememberScrollState()
@@ -140,6 +143,15 @@ fun HomeScreenContent(
                 labelCount = 10,
                 lineColor = android.graphics.Color.GREEN
             )
+
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick = onNavigateToMaps,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("View Maps")
+            }
         }
     }
 }
