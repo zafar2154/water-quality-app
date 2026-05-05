@@ -15,17 +15,17 @@ import javax.inject.Inject
 class SensorViewModel @Inject constructor(
     private val repository: SensorRepository
 ) : ViewModel() {
-
     private val _sensorData = MutableStateFlow(HomeUiState())
     val sensorData: StateFlow<HomeUiState> = _sensorData.asStateFlow()
 
     init {
-        observeSensorData()
+        observeLiveData()
+        observeHistoryData()
     }
 
-    private fun observeSensorData() {
+    private fun observeLiveData() {
         viewModelScope.launch {
-            repository.getSensorStream().collect { data ->
+            repository.getLiveSensorStream().collect { data ->
                 _sensorData.update { currentState ->
                     val newPhHistory = if (data.ph != null && !data.ph.isNaN()) {
                         (currentState.phHistory + data.ph).takeLast(50)
@@ -55,6 +55,25 @@ class SensorViewModel @Inject constructor(
                         tdsHistory = newTdsHistory,
                         tempHistory = newTempHistory,
                         locationHistory = newLocationHistory
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observeHistoryData() {
+        viewModelScope.launch {
+            repository.getHistoryStream().collect { data ->
+                _sensorData.update { state ->
+                    val newPoint = if (data.lat != null && data.lon != null)
+                        Pair(data.lat, data.lon) else null
+
+                    state.copy(
+                        locationHistory =
+                            if (newPoint != null && state.locationHistory.lastOrNull() != newPoint)
+                                (state.locationHistory + newPoint).takeLast(50)
+                            else state.locationHistory,
+                        historyList = (state.historyList + data).takeLast(50)
                     )
                 }
             }

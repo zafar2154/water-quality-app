@@ -15,11 +15,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    const val databaseUrl = "https://water-quality-b7b81-default-rtdb.asia-southeast1.firebasedatabase.app/"
+
 
     // --- Firebase Auth ---
     @Provides
@@ -32,14 +35,24 @@ object AppModule {
         return AuthRepository(firebaseAuth)
     }
 
-    // --- Firebase Realtime Database ---
-    @Provides
-    @Singleton
-    fun provideFirebaseDatabase(): DatabaseReference {
-        val databaseUrl = "https://water-quality-b7b81-default-rtdb.asia-southeast1.firebasedatabase.app/"
-        // Node "sensor_data" harus SAMA dengan yang ada di script Python
-        return FirebaseDatabase.getInstance(databaseUrl).getReference("sensor_data")
+    // --- Firebase Realtime Database : live_status (set) ---
+
+    @Provides @Singleton
+    @Named("live")
+    fun provideLiveRef(): DatabaseReference {
+        return FirebaseDatabase.getInstance(databaseUrl)
+            .getReference("live_status")          // for set()
     }
+
+    // --- Firebase Realtime Database : live_status (set) ---
+
+    @Provides @Singleton
+    @Named("history")
+    fun provideHistoryRef(): DatabaseReference {
+        return FirebaseDatabase.getInstance(databaseUrl)
+            .getReference("sensor_history")       // for push()
+    }
+
 
     // --- Data Storage (IpDataStore) ---
     @Provides
@@ -53,9 +66,10 @@ object AppModule {
     @Singleton
     fun provideSensorRepository(
         ipDataStore: IpDataStore,
-        dbRef: DatabaseReference
+        @Named("live") liveRef: DatabaseReference,
+        @Named("history") historyRef: DatabaseReference
     ): SensorRepository {
-        return SensorRepositoryImpl(ipDataStore, dbRef)
+        return SensorRepositoryImpl(ipDataStore, liveRef, historyRef)
     }
 
     // --- Retrofit Builder (Opsional: Jika masih ada komponen yang butuh) ---
