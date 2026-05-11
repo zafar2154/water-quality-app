@@ -1,6 +1,7 @@
 package com.example.waterquality.ui.screen.homepage
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -52,6 +53,8 @@ fun HomeScreenContent(
     val phIcon = painterResource(R.drawable.logo_ph)
     val tdsIcon = painterResource(R.drawable.logo_tds)
     val tempIcon = painterResource(R.drawable.logo_temp)
+    val turbidityIcon = painterResource(R.drawable.logo_turbidity)
+
 
     // CATATAN:
     // Kita MENGHAPUS 'LaunchedEffect(Unit) { viewModel.loadIpAndStart(context) }'
@@ -73,15 +76,27 @@ fun HomeScreenContent(
             // Bagian Atas: Kartu Data Saat Ini
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(32.dp,
+                    Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                CurrentData(phIcon, sensorData.ph, SensorType.PH)
-                CurrentData(tdsIcon, sensorData.tds, SensorType.TDS)
-                CurrentData(tempIcon, sensorData.temperature, SensorType.Temperature)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CurrentData(tempIcon, sensorData.temperature, SensorType.Temperature)
+                    CurrentData(turbidityIcon, sensorData.turbidity, SensorType.Turbidity)
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CurrentData(phIcon, sensorData.ph, SensorType.PH)
+                    CurrentData(tdsIcon, sensorData.tds, SensorType.TDS)
+                }
             }
 
+
             // Indikator Kualitas Air
-            QualityCheck(sensorData.ph, sensorData.tds, sensorData.temperature)
+            QualityCheck(sensorData.ph, sensorData.tds, sensorData.temperature, sensorData.turbidity)
 
             Spacer(Modifier.height(12.dp))
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
@@ -91,8 +106,7 @@ fun HomeScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentSize()
-                    .height(200.dp),
+                    .wrapContentSize(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Grafik pH
@@ -125,25 +139,52 @@ fun HomeScreenContent(
                         values = uiState.tempHistory,
                         ymax = 100f,
                         granularityY = 10f,
-                        labelCount = 10, // Disesuaikan agar tidak terlalu padat
+                        labelCount = 10,
                         lineColor = android.graphics.Color.YELLOW,
                     )
                 }
             }
-
             Spacer(Modifier.height(24.dp))
-
-            // Grafik TDS
-            Text("TDS Graph", modifier = Modifier.align(Alignment.CenterHorizontally))
-            ChartView(
-                title = "TDS Level (ppm)",
-                values = uiState.tdsHistory,
-                ymax = 1000f,
-                granularityY = 100f,
-                labelCount = 10,
-                lineColor = android.graphics.Color.GREEN
-            )
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize()
+                    .height(200.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier
+                        .width(180.dp)
+                        .height(200.dp)
+                        .weight(1f)
+                ) {
+                    Text("TDS Graph", modifier = Modifier.align(Alignment.CenterHorizontally))
+                    ChartView(
+                        title = "TDS Level (ppm)",
+                        values = uiState.tdsHistory,
+                        ymax = 1000f,
+                        granularityY = 100f,
+                        labelCount = 10,
+                        lineColor = android.graphics.Color.GREEN
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .width(180.dp)
+                        .height(200.dp)
+                        .weight(1f)
+                ) {
+                    Text("Turbidity Graph", modifier = Modifier.align(Alignment.CenterHorizontally))
+                    ChartView(
+                        title = "Turbidity Level (NTU)",
+                        values = uiState.turbidityHistory,
+                        ymax = 10f,
+                        granularityY = 1f,
+                        labelCount = 10,
+                        lineColor = android.graphics.Color.RED
+                    )
+                }
+            }
             Spacer(Modifier.height(24.dp))
 
             Button(
@@ -164,7 +205,8 @@ fun HomeScreenPreview() {
             currentData = SensorResponse(ph = 7.2f, tds = 150f, temperature = 28.5f),
             phHistory = listOf(6.8f, 7.0f, 7.1f, 7.2f, 7.3f),
             tdsHistory = listOf(140f, 145f, 148f, 150f),
-            tempHistory = listOf(28.0f, 28.2f, 28.4f, 28.5f)
+            tempHistory = listOf(28.0f, 28.2f, 28.4f, 28.5f),
+            turbidityHistory = listOf(1.2f, 1.5f, 1.8f, 2.0f, 1.9f)
         ),
         username = "Afit",
         email = "afit@example.com",

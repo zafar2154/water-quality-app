@@ -20,8 +20,8 @@ import com.example.waterquality.ui.theme.WaterQualityTheme
 import com.example.waterquality.utils.QualityWaterCheck
 
 @Composable
-fun QualityCheck(ph: Float?, tds: Float?, temp: Float?) {
-    val status = QualityWaterCheck.evaluate(ph, tds, temp)
+fun QualityCheck(ph: Float?, tds: Float?, temp: Float?, turbidity: Float?) {
+    val status = QualityWaterCheck.evaluate(ph, tds, temp, turbidity)
     val bgColor = status.composeColor
 
     Box(
@@ -46,6 +46,6 @@ fun QualityCheck(ph: Float?, tds: Float?, temp: Float?) {
 @Composable
 fun PreviewQualityCheck() {
     WaterQualityTheme {
-        QualityCheck(ph = 6.0f, tds = 60.0f, temp = 30.0f)
+        QualityCheck(ph = 6.0f, tds = 25.0f, temp = 30.0f, turbidity = 1.0f)
     }
 }

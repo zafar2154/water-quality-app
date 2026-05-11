@@ -40,6 +40,9 @@ class SensorViewModel @Inject constructor(
                             (currentState.tempHistory + data.temperature).takeLast(50)
                         } else currentState.tempHistory
 
+                    val newTurbidityHistory = if (data.turbidity?.isNaN() == false) {
+                        (currentState.turbidityHistory + data.turbidity).takeLast(50)
+                    } else currentState.turbidityHistory
 
                     val newLocationHistory = if (data.lat != null && data.lon != null) {
                         val newPoint = Pair(data.lat, data.lon)
@@ -54,6 +57,7 @@ class SensorViewModel @Inject constructor(
                         phHistory = newPhHistory,
                         tdsHistory = newTdsHistory,
                         tempHistory = newTempHistory,
+                        turbidityHistory = newTurbidityHistory,
                         locationHistory = newLocationHistory
                     )
                 }

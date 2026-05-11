@@ -2,6 +2,7 @@ package com.example.waterquality.data.model
 
 import com.google.firebase.Timestamp
 
+//code ini buat menampung semua parameter dari firebase
 data class SensorResponse(
     val id: String? = null,
     val timestamp: Long? = null,
@@ -16,5 +17,5 @@ data class SensorResponse(
 }
 
 enum class SensorType {
-    PH, TDS, Temperature
+    PH, TDS, Temperature, Turbidity
 }

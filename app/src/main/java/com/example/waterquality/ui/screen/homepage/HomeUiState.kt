@@ -7,6 +7,7 @@ data class HomeUiState(
     val phHistory: List<Float> = emptyList(),
     val tdsHistory: List<Float> = emptyList(),
     val tempHistory: List<Float> = emptyList(),
+    val turbidityHistory: List<Float> = emptyList(),
     val locationHistory: List<Pair<Double, Double>> = emptyList(),
     val historyList: List<SensorResponse> = emptyList(),
     val isLoading: Boolean = false,
