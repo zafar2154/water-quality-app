@@ -26,6 +26,7 @@ fun HomeScreen(
     username: String,
     email: String,
     onNavigateToMaps: () -> Unit = {},
+    onNavigateToHistory: () -> Unit = {}
 ){
     val uiState by viewModel.sensorData.collectAsState()
     HomeScreenContent(
@@ -34,7 +35,8 @@ fun HomeScreen(
         username = username,
         email = email,
         onSaveIpAddress = {ip -> viewModel.saveIpAddress(ip)},
-        onNavigateToMaps = onNavigateToMaps
+        onNavigateToMaps = onNavigateToMaps,
+        onNavigateToHistory = onNavigateToHistory
     )
 }
 
@@ -46,7 +48,8 @@ fun HomeScreenContent(
     username: String,
     email: String,
     onSaveIpAddress: (String) -> Unit,
-    onNavigateToMaps: () -> Unit = {}
+    onNavigateToMaps: () -> Unit = {},
+    onNavigateToHistory: () -> Unit = {}
 ) {
     val sensorData = uiState.currentData
     val scrollState = rememberScrollState()
@@ -187,11 +190,23 @@ fun HomeScreenContent(
             }
             Spacer(Modifier.height(24.dp))
 
-            Button(
-                onClick = onNavigateToMaps,
-                modifier = Modifier.fillMaxWidth()
+// Ganti bagian tombol di paling bawah Column dengan ini:
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("View Maps")
+                Button(
+                    onClick = onNavigateToMaps,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("View Maps")
+                }
+                Button(
+                    onClick = onNavigateToHistory,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Riwayat Data")
+                }
             }
         }
     }

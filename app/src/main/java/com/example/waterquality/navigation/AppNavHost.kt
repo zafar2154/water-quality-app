@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.waterquality.ui.screen.auth.AuthViewModel
 import com.example.waterquality.ui.screen.auth.LoginScreen
 import com.example.waterquality.ui.screen.auth.RegisterScreen
+import com.example.waterquality.ui.screen.homepage.HistoryScreen
 import com.example.waterquality.ui.screen.homepage.HomeScreen
 import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.ui.screen.maps.OsmMapView
@@ -51,12 +52,20 @@ fun AppNavHost(
                 },
                 username = username,
                 email = email,
-                onNavigateToMaps = { navController.navigate(Routes.MAPS) }
+                onNavigateToMaps = { navController.navigate(Routes.MAPS) },
+                onNavigateToHistory = { navController.navigate(Routes.HISTORY) }
+
             )
         }
         composable(Routes.MAPS) {
             val uiState by sharedSensorViewModel.sensorData.collectAsState()
             OsmMapView(points = uiState.locationHistory)
+        }
+        composable(Routes.HISTORY) {
+            HistoryScreen(
+                viewModel = sharedSensorViewModel,
+                onBack = { navController.popBackStack() }
+            )
         }
         // kalau ada detail page, taruh di sini
         // composable(Routes.DETAIL) { DetailScreen() }
