@@ -59,7 +59,7 @@ fun AppNavHost(
         }
         composable(Routes.MAPS) {
             val uiState by sharedSensorViewModel.sensorData.collectAsState()
-            OsmMapView(points = uiState.locationHistory)
+            OsmMapView(points = uiState.historyList)
         }
         composable(Routes.HISTORY) {
             HistoryScreen(

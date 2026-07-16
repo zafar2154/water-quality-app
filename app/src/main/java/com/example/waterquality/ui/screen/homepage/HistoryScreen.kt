@@ -34,7 +34,6 @@ import com.example.waterquality.data.model.SensorResponse
 import com.example.waterquality.ui.screen.homepage.SensorViewModel
 import com.example.waterquality.ui.theme.WaterQualityTheme
 import com.example.waterquality.utils.ExportService
-import com.example.waterquality.utils.QualityWaterCheck
 import com.example.waterquality.utils.TimestampFormat
 import com.example.waterquality.utils.WaterStatus
 import kotlinx.coroutines.launch
@@ -140,19 +139,6 @@ fun HistoryScreenContent(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    if (isExporting) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp)
-                            Spacer(Modifier.width(6.dp))
-                            Text("Mengekspor…", fontSize = 12.sp)
-                        }
-                    } else {
-                        Text(
-                            text = "↑ Tekan ikon unduh untuk ekspor CSV",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
                 }
             }
 
@@ -240,7 +226,7 @@ fun RowScope.HeaderCell(text: String, weight: Float) {
 // ── Single data row ─────────────────────────────────────────────────────────
 @Composable
 fun HistoryRow(item: SensorResponse, isEven: Boolean) {
-    val status = QualityWaterCheck.evaluate(item.ph, item.tds, item.temperature, item.turbidity)
+    val status = WaterStatus.fromKategori(item.kategori)
     val rowBg  = if (isEven) Color.Transparent
     else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
 

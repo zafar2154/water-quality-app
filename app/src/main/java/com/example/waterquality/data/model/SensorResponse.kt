@@ -11,7 +11,9 @@ data class SensorResponse(
     val temperature: Float? = null,
     val turbidity: Float? = null,
     val lat: Double? = null,
-    val lon: Double? = null
+    val lon: Double? = null,
+    val kategori: String? = null,
+    val wqi: Float? = null
 ) {
     // Constructor kosong otomatis dibuat oleh Kotlin jika semua parameter punya nilai default
 }

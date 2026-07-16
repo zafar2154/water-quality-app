@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,13 +39,12 @@ import com.example.waterquality.ui.theme.BgYellow
 import com.example.waterquality.ui.theme.WaterQualityTheme
 import com.example.waterquality.utils.QualityWaterCheck
 
-
-
 @Composable
 fun CurrentData(
     icon: Painter,
     value: Float?,
-    desc: SensorType
+    desc: SensorType,
+    modifier: Modifier = Modifier
 ) {
     val status = QualityWaterCheck.evaluateSensor(desc, value)
     val bgColor = status.composeColor
@@ -102,6 +102,6 @@ fun CurrentData(
 @Composable
 fun PreviewCurrentData() {
     WaterQualityTheme {
-        CurrentData(icon = painterResource(R.drawable.logo_tds), value = 7.0f, desc = SensorType.PH)
+        CurrentData(icon = painterResource(R.drawable.logo_tds), value = 7.0f, desc = SensorType.PH, modifier = Modifier.fillMaxSize())
     }
 }

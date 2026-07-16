@@ -17,11 +17,11 @@ import androidx.compose.ui.unit.dp
 import com.example.waterquality.ui.theme.BgGreen
 import com.example.waterquality.ui.theme.BgRed
 import com.example.waterquality.ui.theme.WaterQualityTheme
-import com.example.waterquality.utils.QualityWaterCheck
+import com.example.waterquality.utils.WaterStatus
 
 @Composable
-fun QualityCheck(ph: Float?, tds: Float?, temp: Float?, turbidity: Float?) {
-    val status = QualityWaterCheck.evaluate(ph, tds, temp, turbidity)
+fun QualityCheck(kategori: String?) {
+    val status = WaterStatus.fromKategori(kategori)
     val bgColor = status.composeColor
 
     Box(
@@ -46,6 +46,6 @@ fun QualityCheck(ph: Float?, tds: Float?, temp: Float?, turbidity: Float?) {
 @Composable
 fun PreviewQualityCheck() {
     WaterQualityTheme {
-        QualityCheck(ph = 6.0f, tds = 25.0f, temp = 30.0f, turbidity = 1.0f)
+        QualityCheck(kategori = "Aman")
     }
 }

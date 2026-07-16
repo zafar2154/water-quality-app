@@ -45,7 +45,7 @@ object ExportService {
         val sb = StringBuilder()
 
         // Header
-        sb.appendLine("No,Waktu,pH,TDS (ppm),Suhu (°C),Turbidity (NTU),Status,Latitude,Longitude")
+        sb.appendLine("No,Waktu,pH,TDS (ppm),Suhu (°C),Turbidity (NTU),WQI,Kategori,Latitude,Longitude")
 
         // Rows — terbaru di atas
         data.reversed().forEachIndexed { index, item ->
@@ -54,11 +54,12 @@ object ExportService {
             val tds    = item.tds?.let { "%.1f".format(it) } ?: "-"
             val temp   = item.temperature?.let { "%.1f".format(it) } ?: "-"
             val turb   = item.turbidity?.let { "%.2f".format(it) } ?: "-"
-            val status = QualityWaterCheck.evaluate(item.ph, item.tds, item.temperature, item.turbidity).label
+            val wqi    = item.wqi?.let { "%.2f".format(it) } ?: "-"
+            val status = item.kategori ?: "-"
             val lat    = item.lat?.toString() ?: "-"
             val lon    = item.lon?.toString() ?: "-"
 
-            sb.appendLine("${index + 1},$time,$ph,$tds,$temp,$turb,\"$status\",$lat,$lon")
+            sb.appendLine("${index + 1},$time,$ph,$tds,$temp,$turb,$wqi,\"$status\",$lat,$lon")
         }
 
         return sb.toString()

@@ -19,6 +19,8 @@ import com.example.waterquality.ui.component.NavBar
 import com.example.waterquality.ui.component.ChartView
 import com.example.waterquality.ui.component.CurrentData
 import com.example.waterquality.ui.component.QualityCheck
+import com.example.waterquality.ui.component.StatsCard
+
 @Composable
 fun HomeScreen(
     viewModel: SensorViewModel = hiltViewModel(),
@@ -99,9 +101,9 @@ fun HomeScreenContent(
 
 
             // Indikator Kualitas Air
-            QualityCheck(sensorData.ph, sensorData.tds, sensorData.temperature, sensorData.turbidity)
-
+            QualityCheck(sensorData.kategori)
             Spacer(Modifier.height(12.dp))
+            StatsCard(historyList = uiState.historyList)
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
             Spacer(Modifier.height(24.dp))
 
