@@ -19,10 +19,14 @@ import com.example.waterquality.ui.theme.BgRed
 import com.example.waterquality.ui.theme.WaterQualityTheme
 import com.example.waterquality.utils.WaterStatus
 
+/**
+ * @param isStale true jika data sudah tidak terkini (perangkat offline). Warna status
+ * diredam jadi abu-abu agar status "Aman" lama tidak menyesatkan pengguna.
+ */
 @Composable
-fun QualityCheck(kategori: String?) {
+fun QualityCheck(kategori: String?, isStale: Boolean = false) {
     val status = WaterStatus.fromKategori(kategori)
-    val bgColor = status.composeColor
+    val bgColor = if (isStale) Color.Gray else status.composeColor
 
     Box(
         modifier = Modifier
@@ -34,7 +38,7 @@ fun QualityCheck(kategori: String?) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = status.label,
+            text = if (isStale) "${status.label} (data lama)" else status.label,
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Black
         )

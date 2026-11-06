@@ -1,6 +1,8 @@
 package com.example.waterquality.ui.screen.homepage
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,6 +20,8 @@ import com.example.waterquality.data.model.SensorType
 import com.example.waterquality.ui.component.NavBar
 import com.example.waterquality.ui.component.ChartView
 import com.example.waterquality.ui.component.CurrentData
+import com.example.waterquality.ui.component.DeviceStatusBanner
+import com.example.waterquality.utils.DeviceStatus
 import com.example.waterquality.ui.component.QualityCheck
 import com.example.waterquality.ui.component.StatsCard
 
@@ -36,7 +40,6 @@ fun HomeScreen(
         onLogout = onLogout,
         username = username,
         email = email,
-        onSaveIpAddress = {ip -> viewModel.saveIpAddress(ip)},
         onNavigateToMaps = onNavigateToMaps,
         onNavigateToHistory = onNavigateToHistory
     )
@@ -49,7 +52,6 @@ fun HomeScreenContent(
     onLogout: () -> Unit = {},
     username: String,
     email: String,
-    onSaveIpAddress: (String) -> Unit,
     onNavigateToMaps: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {}
 ) {
@@ -67,7 +69,7 @@ fun HomeScreenContent(
 
     Scaffold(
         // Kita melempar viewModel ke NavBar agar NavBar bisa mengakses fungsi ganti IP
-        topBar = { NavBar(onSaveIpAddress = onSaveIpAddress, onLogout = onLogout, username = username, email = email) },
+        topBar = { NavBar(onLogout = onLogout, username = username, email = email) },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
@@ -78,6 +80,24 @@ fun HomeScreenContent(
                 .verticalScroll(scrollState)
                 .fillMaxSize()
         ) {
+            DeviceStatusBanner(
+                deviceStatus = uiState.deviceStatus,
+                lastSeenMillis = uiState.lastSeenMillis,
+                isFirebaseConnected = uiState.isFirebaseConnected
+            )
+
+            uiState.errorMessage?.let { message ->
+                Text(
+                    text = message,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                )
+                Spacer(Modifier.height(12.dp))
+            }
+
             // Bagian Atas: Kartu Data Saat Ini
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -101,7 +121,10 @@ fun HomeScreenContent(
 
 
             // Indikator Kualitas Air
-            QualityCheck(sensorData.kategori)
+            QualityCheck(
+                kategori = sensorData.kategori,
+                isStale = uiState.deviceStatus == DeviceStatus.OFFLINE || !uiState.isFirebaseConnected
+            )
             Spacer(Modifier.height(12.dp))
             StatsCard(historyList = uiState.historyList)
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
@@ -227,7 +250,6 @@ fun HomeScreenPreview() {
         ),
         username = "Afit",
         email = "afit@example.com",
-        onLogout = {},
-        onSaveIpAddress = {}
+        onLogout = {}
     )
 }

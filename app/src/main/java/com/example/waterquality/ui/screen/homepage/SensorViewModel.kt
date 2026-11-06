@@ -1,32 +1,73 @@
 package com.example.waterquality.ui.screen.homepage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.waterquality.data.model.SensorResponse
+import com.example.waterquality.data.repository.AuthRepository
 import com.example.waterquality.data.repository.SensorRepository
+import com.example.waterquality.utils.deviceStatusFor
+import com.example.waterquality.utils.resolveLastSeen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SensorViewModel @Inject constructor(
-    private val repository: SensorRepository
+    private val repository: SensorRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _sensorData = MutableStateFlow(HomeUiState())
     val sensorData: StateFlow<HomeUiState> = _sensorData.asStateFlow()
 
     init {
-        observeLiveData()
-        observeHistoryData()
+        // Listener Firebase hanya aktif selama ada user yang login.
+        // Saat logout (uid -> null), collectLatest membatalkan listener lama
+        // sehingga tidak terjadi "permission denied" di luar sesi login.
+        viewModelScope.launch {
+            authRepository.authState()
+                .map { it?.uid }
+                .distinctUntilChanged()
+                .collectLatest { uid ->
+                    _sensorData.value = HomeUiState()
+                    if (uid == null) return@collectLatest
+                    coroutineScope {
+                        launch { observeLiveData() }
+                        launch { observeHistoryData() }
+                        launch { observeFirebaseConnection() }
+                        launch { watchDeviceStatus() }
+                    }
+                }
+        }
     }
 
-    private fun observeLiveData() {
-        viewModelScope.launch {
-            repository.getLiveSensorStream().collect { data ->
+    private fun onStreamError(source: String, e: Throwable) {
+        Log.e("SensorViewModel", "Stream $source error", e)
+        _sensorData.update {
+            it.copy(errorMessage = "Gagal memuat $source: ${e.message ?: "kesalahan tidak diketahui"}")
+        }
+    }
+
+    private suspend fun observeLiveData() {
+        repository.getLiveSensorStream()
+            .catch { e -> onStreamError("data live", e) }
+            .collect { data ->
+                // Node kosong (perangkat belum pernah kirim) tidak dihitung sebagai "terlihat"
+                val receivedAt = System.currentTimeMillis()
                 _sensorData.update { currentState ->
+                    val lastSeen = if (data == SensorResponse()) currentState.lastSeenMillis
+                    else resolveLastSeen(data.timestamp, receivedAt)
+
                     val newPhHistory = if (data.ph != null && !data.ph.isNaN()) {
                         (currentState.phHistory + data.ph).takeLast(50)
                     } else currentState.phHistory
@@ -46,7 +87,7 @@ class SensorViewModel @Inject constructor(
 
                     val newLocationHistory = if (data.lat != null && data.lon != null) {
                         val newPoint = Pair(data.lat, data.lon)
-                        // Tambahkan titik hanya jika sensor benar-benar bergerak untuk mencegah penanda yang tumpang tindih
+                        // Tambahkan titik hanya jika sensor benar-benar bergerak
                         if (currentState.locationHistory.lastOrNull() != newPoint) {
                             (currentState.locationHistory + newPoint).takeLast(50)
                         } else currentState.locationHistory
@@ -58,16 +99,19 @@ class SensorViewModel @Inject constructor(
                         tdsHistory = newTdsHistory,
                         tempHistory = newTempHistory,
                         turbidityHistory = newTurbidityHistory,
-                        locationHistory = newLocationHistory
+                        locationHistory = newLocationHistory,
+                        errorMessage = null,
+                        lastSeenMillis = lastSeen,
+                        deviceStatus = deviceStatusFor(lastSeen, receivedAt)
                     )
                 }
             }
-        }
     }
 
-    private fun observeHistoryData() {
-        viewModelScope.launch {
-            repository.getHistoryStream().collect { data ->
+    private suspend fun observeHistoryData() {
+        repository.getHistoryStream()
+            .catch { e -> onStreamError("riwayat", e) }
+            .collect { data ->
                 _sensorData.update { state ->
                     val newPoint = if (data.lat != null && data.lon != null)
                         Pair(data.lat, data.lon) else null
@@ -81,12 +125,32 @@ class SensorViewModel @Inject constructor(
                     )
                 }
             }
+    }
+
+    private suspend fun observeFirebaseConnection() {
+        repository.observeFirebaseConnection()
+            .catch { e -> Log.e("SensorViewModel", "Stream koneksi error", e) }
+            .collect { connected ->
+                _sensorData.update { it.copy(isFirebaseConnected = connected) }
+            }
+    }
+
+    /**
+     * Evaluasi ulang status perangkat secara berkala. Tanpa ini, status tidak
+     * pernah berubah jadi OFFLINE karena Firebase tidak mengirim event apa pun
+     * ketika perangkat berhenti mengirim data.
+     * StateFlow hanya emit jika nilainya berubah, jadi UI tidak recompose tiap detik.
+     */
+    private suspend fun watchDeviceStatus() {
+        while (true) {
+            _sensorData.update {
+                it.copy(deviceStatus = deviceStatusFor(it.lastSeenMillis, System.currentTimeMillis()))
+            }
+            delay(STATUS_CHECK_INTERVAL_MS)
         }
     }
 
-    fun saveIpAddress(ip: String) {
-        viewModelScope.launch {
-            repository.saveIp(ip)
-        }
+    private companion object {
+        const val STATUS_CHECK_INTERVAL_MS = 1_000L
     }
 }

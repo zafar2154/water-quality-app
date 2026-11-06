@@ -2,7 +2,6 @@
 
 package com.example.waterquality.ui.screen.maps
 
-import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import androidx.compose.foundation.background
@@ -38,7 +37,6 @@ import com.example.waterquality.data.model.SensorType
 import com.example.waterquality.ui.component.CurrentData
 import com.example.waterquality.ui.component.QualityCheck
 import com.example.waterquality.utils.WaterStatus
-import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -65,12 +63,7 @@ fun OsmMapView(
         } else {
             AndroidView(
                 factory = { context ->
-                    // load konfigurasi osmdroid
-                    Configuration.getInstance().load(
-                        context,
-                        context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE)
-                    )
-
+                    // Konfigurasi osmdroid (termasuk User-Agent) sudah di-set di WaterQualityApplication
                     MapView(context).apply {
                         setTileSource(TileSourceFactory.MAPNIK)
                         setMultiTouchControls(true)

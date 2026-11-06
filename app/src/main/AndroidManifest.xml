@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Hanya untuk ekspor CSV di Android 9 ke bawah; Android 10+ memakai MediaStore -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <application
         android:allowBackup="true"
@@ -17,10 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WaterQuality"
         tools:targetApi="31"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:name=".WaterQualityApplication"
         >
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
         <activity
             android:name=".MainActivity"

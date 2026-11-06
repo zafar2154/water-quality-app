@@ -5,6 +5,9 @@ import kotlinx.coroutines.tasks.await
 import com.example.waterquality.utils.Resource // Wrapper yang kita buat sebelumnya
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 class AuthRepository(private val firebaseAuth: FirebaseAuth) {
     suspend fun register(email: String, pass: String, username: String): Resource<String> {
@@ -46,4 +49,11 @@ class AuthRepository(private val firebaseAuth: FirebaseAuth) {
     fun isUserLoggedIn(): Boolean = firebaseAuth.currentUser != null
 
     fun logout() = firebaseAuth.signOut()
+
+    // Emit user saat ini setiap kali status login berubah (langsung emit sekali saat dipasang)
+    fun authState(): Flow<FirebaseUser?> = callbackFlow {
+        val listener = FirebaseAuth.AuthStateListener { trySend(it.currentUser) }
+        firebaseAuth.addAuthStateListener(listener)
+        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
+    }
 }

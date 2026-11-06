@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,8 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.waterquality.ui.screen.auth.AuthViewModel
 import com.example.waterquality.ui.theme.WaterQualityTheme
 
 @Composable
@@ -28,13 +25,11 @@ fun ProfilePopUp(
     username: String,
     email: String,
     onDismiss: () -> Unit,
-    onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
         ProfilePopUpContent( // Call the extracted content here
             onDismiss = onDismiss,
-            onSettingsClick = onSettingsClick,
             onLogoutClick = onLogoutClick,
             username = username,
             email = email
@@ -48,7 +43,6 @@ fun ProfilePopUpContent(
     username: String,
     email: String,
     onDismiss: () -> Unit,
-    onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
     Card(
@@ -96,17 +90,7 @@ fun ProfilePopUpContent(
             HorizontalDivider() // Ensure this is available or use Divider()
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 3. Menu Settings
-            ProfileMenuItem(
-                icon = Icons.Default.Settings,
-                text = "Pengaturan IP",
-                onClick = {
-                    onDismiss()
-                    onSettingsClick()
-                }
-            )
-
-            // 4. Menu Logout
+            // 3. Menu Logout
             ProfileMenuItem(
                 icon = Icons.AutoMirrored.Filled.ExitToApp,
                 text = "Logout",
@@ -159,7 +143,6 @@ fun ProfilePopUpContentPreview() {
         Box(modifier = Modifier.padding(16.dp)) { // Add padding to see the card shadow
             ProfilePopUpContent(
                 onDismiss = {},
-                onSettingsClick = {},
                 onLogoutClick = {},
                 username = "Preview User",
                 email = "preview@email.com",
